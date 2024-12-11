@@ -41,10 +41,11 @@ module.exports.handlenotify = async (req, res) => {
     } else if (type === "View") {
       notificationTitle = `A person viewed your uploaded file: ${userdata.name}, role: ${userdata.role}`;
       notificationBody = `File named "${filedetails.filename}" was viewed by ${userdata.name}.`;
+      const lowermetamaskid = to.toLowerCase();
       await NotificationModel.create({
         filedetails,
         title: notificationTitle,
-        to,
+        to:lowermetamaskid,
         type: "view",
         userdata,
       });
@@ -164,7 +165,8 @@ module.exports.handleConfirmView = async (req, res) => {
     if (!response) {
       return res.status(404).json({ msg: "Request not found." });
     }
-    const touser = await userModel.findOne({ metamaskId: response.userId });
+    const lowermetamaskid = response.userId.toLowerCase();
+    const touser = await userModel.findOne({metamaskId:lowermetamaskid});
     if (!touser) {
       return res.status(404).json({ msg: "User not found." });
     }
@@ -196,8 +198,8 @@ module.exports.handleReject = async (req, res) => {
     if (!response) {
       return res.status(404).json({ msg: "Request not found." });
     }
-
-    const touser = await userModel.findOne({ metamaskId: response.userId });
+    const lowermetamaskid = response.userId.toLowerCase();
+    const touser = await userModel.findOne({metamaskId:lowermetamaskid});
     if (!touser) {
       return res.status(404).json({ msg: "User not found." });
     }
