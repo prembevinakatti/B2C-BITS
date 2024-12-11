@@ -5,20 +5,15 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
- 
-  
 } from "@/components/ui/tabs"; // Replace with your ShadCN imports
 import { Card,
     CardHeader,
     CardContent,
     CardFooter}from "@/components/ui/card"
-    
 import {Button}from "@/components/ui/button"
 import {Skeleton}from "@/components/ui/skeleton"
 import axiosInstance from "@/utils/Axiosinstance";
 import { useSelector } from "react-redux";
-
-
 const RequestCard = ({ request, onAction }) => (
   <Card className="mb-4">
     <CardHeader>
@@ -77,11 +72,11 @@ const RequestViewPage = () => {
   // Handle action (Accept/Reject)
   const handleRequestAction = async (id, action) => {
     try {
-        if(action=="Accept"){
+        if(action=="approved"){
             await axiosInstance.post(`/accesscontrol/viewconform`,{requestId:id})
         }
         else{
-            await axiosInstance.post(`/accesscontrol/viewconform`,{requestId:id})
+            await axiosInstance.post(`/accesscontrol/viewreject`,{requestId:id})
         }
       fetchRequests(); // Refresh the data
     } catch (error) {

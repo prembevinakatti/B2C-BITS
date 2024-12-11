@@ -35,6 +35,7 @@ module.exports.handlenotify = async (req, res) => {
         body: notificationBody,
         clickAction: "http://localhost:5173/notify",
       };
+      console.log(fcmTokens,"fmctokken")
       if (fcmTokens.length > 0) {
         await pushnotification({ fcmTokens, notificationData });
       }
@@ -55,7 +56,7 @@ module.exports.handlenotify = async (req, res) => {
         body: notificationBody,
         clickAction: "http://localhost:5173/notify",
       };
-      console.log();
+      console.log(fcmTokens,"fmctokken")
       if (fcmTokens.length > 0) {
         await pushnotification({ fcmTokens, notificationData });
       }
@@ -131,6 +132,7 @@ module.exports.handleCreateViewRequest = async (req, res) => {
     const fcmTokens = Array.isArray(touser.fcmTokens)
       ? touser.fcmTokens.filter((token) => token)
       : [];
+      console.log(fcmTokens,"fmctokken")
     const notificationData = {
       title: "A new view request for you",
       body: description,
@@ -171,6 +173,7 @@ module.exports.handleConfirmView = async (req, res) => {
       return res.status(404).json({ msg: "User not found." });
     }
     const fcmTokens = touser.fcmTokens || [];
+    console.log(fcmTokens,"fmctokken")
     const notificationData = {
       title: "Your file request has been accepted",
       body: "Your request was approved by the admin.",
@@ -205,6 +208,7 @@ module.exports.handleReject = async (req, res) => {
     }
 
     const fcmTokens = touser.fcmTokens || [];
+    console.log(fcmTokens,"fmctokken")
     const notificationData = {
       title: "Your file request has been rejected",
       body: "Your request was denied by the admin.",

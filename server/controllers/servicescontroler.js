@@ -43,7 +43,7 @@ module.exports.handleGetRequestByStatus = async (req, res) => {
     const data = await Requestmodel.find({ to: metamaskId, status });
     if (data.length === 0) {
       return res
-        .status(404)
+        .status(200)
         .json({ msg: "No data found for the given status and ID", data: [] });
     }
     res.status(200).json({ msg: "Fetched data successfully", data });

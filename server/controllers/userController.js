@@ -1,6 +1,7 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const mailservice = require("../services/emailservice");
 
 module.exports.createAccount = async (req, res) => {
   try {
@@ -43,7 +44,7 @@ module.exports.createAccount = async (req, res) => {
       branch,
       department,
     });
-
+ 
     return res
       .status(200)
       .json({ message: "User created successfully", success: true, user });
@@ -147,7 +148,13 @@ module.exports.createAdminOrStaff = async (req, res) => {
     if (!newUser) {
       return res.status(500).json({ message: "Failed to create account" });
     }
-
+    const data={
+      email:email,
+      subject:`your are assigned with  role in you should name it ${role} in branch ${branch},
+      `,
+      text:`assigned department form for you ${[...department]}  your paasowrd to login ${password}`
+}
+  mailservice.sendnotification(data)
     res.status(201).json({
       message: "Account created successfully",
       success: true,
