@@ -3,6 +3,11 @@ import { Button } from "../../ui/button";
 import ModeTogle from "./ModeTogle";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMenu } from "react-icons/io5";
+import { FaUserCheck, FaHome, FaFileUpload, FaSignOutAlt } from "react-icons/fa";
+import { RiAdminLine } from "react-icons/ri";
+import { MdDashboard, MdNotifications } from "react-icons/md";
+import { SiBlockchaindotcom } from "react-icons/si";
+import { PiTreeViewDuotone } from "react-icons/pi";
 import {
   Sheet,
   SheetContent,
@@ -12,42 +17,44 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "react-router-dom";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@/components/ui/popover"; // Importing Popover component
+} from "@/components/ui/popover";
 import { setAuthUser } from "@/redux/authslice";
 import axiosInstance from "@/utils/Axiosinstance";
-import { RiAdminLine } from "react-icons/ri";
-import { FaUserCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showPopover, setShowPopover] = useState(false); // State for Popover
+  const [showPopover, setShowPopover] = useState(false);
   const dispatch = useDispatch();
   const isLogined = useSelector((state) => state.auth.authUser);
-
   const navigate = useNavigate();
+
   const handleLogout = () => {
     dispatch(setAuthUser(null));
-    axiosInstance.post("");
+    axiosInstance.post("/logout");
   };
+
   const handleNavigation = (path) => {
     navigate(path);
     setIsOpen(false);
   };
+
   const handleSheetOpen = () => {
-    // if (!isLogined) {
-    //   setShowPopover(true);
-    //   return;
-    // }
+    if (!isLogined) {
+      setShowPopover(true);
+      return;
+    }
     setIsOpen(true);
   };
+
   return (
-    <nav className="w-screen shadow-md">
-      <div className="w-full flex items-center px-4 py-3 mx-auto justify-between">
-        {/* Menu Trigger with Popover */}
+    <nav className="w-full shadow-md ">
+      <div className="max-w-7xl mx-auto flex items-center px-4 py-3 justify-between">
+        {/* Menu Trigger */}
         <Popover open={showPopover} onOpenChange={setShowPopover}>
           <PopoverTrigger asChild>
             <div onClick={handleSheetOpen}>
@@ -73,58 +80,53 @@ function Navbar() {
                 <div>
                   <Separator className="my-3" />
                   <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/")}
+                  >
+                    <FaHome /> Home
+                  </div>
+                  <Separator className="my-3" />
+                  <div
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/view")}
                   >
-                    view files
+                    <PiTreeViewDuotone /> View Files
                   </div>
                   <Separator className="my-3" />
                   <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/uploadfiles")}
                   >
-                    uploadfiles
+                    <FaFileUpload /> Upload Files
                   </div>
                   <Separator className="my-3" />
                   <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
-                    onClick={() => handleNavigation("/createuser")}
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/requests")}
                   >
-                    create accounts
+                    <MdNotifications /> Requests
                   </div>
                   <Separator className="my-3" />
-
                   <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
-                    onClick={() => navigate("requests")}
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/assignpanel")}
                   >
-                    Request
+                    <MdDashboard /> Assign Panel
                   </div>
-
-                  <Separator className="my-3" />
-                  <Separator className="my-3" />
-
-                  <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
-                    onClick={() => navigate("/assignpanel")}
-                  >
-                    assignpanel
-                  </div>
-
                   <Separator className="my-3" />
                   <div
-                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/connectmetamask")}
                   >
-                    Connect to metamask
+                    <SiBlockchaindotcom/>Connect to Metamask
                   </div>
                   <Separator className="my-3" />
                   {isLogined && (
                     <div
-                      className="cursor-pointer text-slate-800 hover:text-red-800 dark:hover:text-red-500 dark:text-red-200"
+                      className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-red-800 dark:hover:text-red-500 dark:text-red-200"
                       onClick={handleLogout}
                     >
-                      Logout
+                      <FaSignOutAlt /> Logout
                     </div>
                   )}
                 </div>
@@ -135,35 +137,30 @@ function Navbar() {
 
         {/* Logo */}
         <div className="text-2xl font-bold text-black dark:text-white">
-          <a href="/"> youshould name it</a>
+          <a href="/">you should name it</a>
         </div>
 
-        {/* Auth Buttons */}
-        <div className="flex space-x-2 items-center">
+        {/* Auth and Theme Toggle */}
+        <div className="flex items-center space-x-4">
           <ModeTogle />
-
           {isLogined ? (
-            <div>
-              <div className="flex gap-2 border-1 drop-shadow-md ">
-                {isLogined?.role}
-                {isLogined?.role == "Head" ? (
-                  <RiAdminLine className="mt-1" />
-                ) : (
-                  <FaUserCheck className="mt-1" />
-                )}
-              </div>
+            <div className="flex items-center gap-2 border px-3 py-1 rounded-md bg-gray-200 dark:bg-gray-700">
+              {isLogined.role}
+              {isLogined.role === "Head" ? (
+                <RiAdminLine size={20} />
+              ) : (
+                <FaUserCheck size={20} />
+              )}
             </div>
           ) : (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                Login
-              </Button>
-            </>
+            <Button
+              variant="outline"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </Button>
           )}
         </div>
       </div>
