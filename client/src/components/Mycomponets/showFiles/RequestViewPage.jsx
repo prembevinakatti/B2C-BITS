@@ -14,7 +14,7 @@ import { Card,
     CardFooter}from "@/components/ui/card"
     
 import {Button}from "@/components/ui/button"
-import {Skeleton}from "@/components/ui/ske"
+import {Skeleton}from "@/components/ui/skeleton"
 import axiosInstance from "@/utils/Axiosinstance";
 import { useSelector } from "react-redux";
 
