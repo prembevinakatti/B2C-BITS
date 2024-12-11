@@ -65,7 +65,7 @@ const RequestViewPage = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/services/requests?status=${tab}id=${user.id}`);
+      const response = await axiosInstance.get(`/services/requests?status=${tab}&id=${user.metamaskId}`);
       setRequests(response.data.data);
     } catch (error) {
       console.error("Failed to fetch requests:", error);

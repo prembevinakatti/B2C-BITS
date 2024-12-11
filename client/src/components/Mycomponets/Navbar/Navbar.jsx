@@ -93,16 +93,22 @@ function Navbar() {
                     create accounts
                   </div>
                   <Separator className="my-3" />
-                
-                  <div className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white" onClick={()=>navigate("requests")}>
+
+                  <div
+                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => navigate("requests")}
+                  >
                     Request
                   </div>
-                  
+
                   <Separator className="my-3" />
                   <Separator className="my-3" />
-                
-                  <div className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white" onClick={()=>navigate("/assignpanel")}>
-                  assignpanel
+
+                  <div
+                    className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => navigate("/assignpanel")}
+                  >
+                    assignpanel
                   </div>
 
                   <Separator className="my-3" />
@@ -138,10 +144,13 @@ function Navbar() {
 
           {isLogined ? (
             <div>
-             
               <div className="flex gap-2 border-1 drop-shadow-md ">
                 {isLogined?.role}
-                {isLogined?.role == "Head" ? <RiAdminLine className="mt-1" /> : <FaUserCheck className="mt-1" />}
+                {isLogined?.role == "Head" ? (
+                  <RiAdminLine className="mt-1" />
+                ) : (
+                  <FaUserCheck className="mt-1" />
+                )}
               </div>
             </div>
           ) : (
