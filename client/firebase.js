@@ -12,7 +12,7 @@ class FirebaseService {
       appId: "1:169625164665:web:7844e2658b83a699a1ada8",
       measurementId: "G-TZ70JLZ7QC",
     };
-    this.vapidKey ="BDFIMSgxT6nNM-CDpgUlG05oHUjD69OG-ovq-VHBD5pHxqKp-RnOtiAOHu2tQQ3fU8AymC9erAlwnNrfpDnAvoE";
+    this.vapidKey ="BO1ZilxwyJJE9KisT1daLvlLEkx-FNtE4pI_Xwv6VmAxHXxJWBReavqJKot1L6SnHyKsg927PhKpaUYWlizuyRk";
     this.app = initializeApp(this.firebaseConfig);
     this.messaging = getMessaging(this.app);
   }

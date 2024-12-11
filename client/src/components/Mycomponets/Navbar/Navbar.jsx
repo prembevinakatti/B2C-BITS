@@ -94,7 +94,7 @@ function Navbar() {
                   </div>
                   <Separator className="my-3" />
                 
-                  <div className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white">
+                  <div className="cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white" onClick={navigate("requests")}>
                     Request
                   </div>
                   

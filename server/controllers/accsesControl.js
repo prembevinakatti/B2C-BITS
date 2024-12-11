@@ -6,11 +6,14 @@ const categoryModel = require("../models/category");
 module.exports.handlenotify = async (req, res) => {
     console.log(req.body);
     const { to, type, userdata, filedetails } = req.body;
+    console.log( to, type, userdata, filedetails)
     if (!to || !type || !userdata || !filedetails) {
         return res.status(400).json({ message: "Missing required fields." });
     }
     try {
-        const touser = await userModel.findOne({metamaskId:to});
+        const lowermetamaskid = to.toLowerCase();
+
+        const touser = await userModel.findOne({metamaskId:lowermetamaskid});
         if (!touser) {
             return res.status(404).json({ message: "User not found." });
         }
@@ -52,6 +55,7 @@ module.exports.handlenotify = async (req, res) => {
                 body: notificationBody,
                 clickAction: "http://localhost:5173/notify",
             };
+            console.log()
             if (fcmTokens.length > 0) {
                 await pushnotification({ fcmTokens, notificationData });
             }
@@ -66,7 +70,7 @@ module.exports.handlenotify = async (req, res) => {
 };
 module.exports.handleGetFileAccessStatus = async (req, res) => {
     const { fileId, userId } = req.body;
-    console.log(fileId, userId )
+    console.log(fileId, userId ,"file acees stutaus")
 
     try {
         const data = await Requestmodel.findOne({ fileId, userId });
@@ -89,6 +93,11 @@ module.exports.handleGetFileAccessStatus = async (req, res) => {
 module.exports.handleCreateViewRequest = async (req, res) => {
     const { filedetails, description, userId } = req.body;
 
+    // Validate required fields
+    if (!filedetails || !description || !userId) {
+        return res.status(400).json({ msg: "Missing required fields." });
+    }
+
     try {
         const newRequest = await Requestmodel.create({
             description,
@@ -96,26 +105,40 @@ module.exports.handleCreateViewRequest = async (req, res) => {
             to: filedetails.to,
             userId,
         });
-        console.log(newRequest,"new request")
-        const touser = await userModel.findOne({metamaskId:filedetails.to});
+        console.log(newRequest, "new request");
+
+        // Ensure `to` is a valid string before converting case
+        if (typeof filedetails.to !== "string") {
+            return res.status(400).json({ msg: "Invalid `to` field in filedetails." });
+        }
+
+        const lowermetamaskid = filedetails.to.toLowerCase();
+
+        // Find the recipient user
+        const touser = await userModel.findOne({ metamaskId: lowermetamaskid });
         if (!touser) {
             return res.status(404).json({ msg: "User not found." });
         }
-        const fcmTokens = touser.fcmTokens || [];
+
+        // Send push notification if FCM tokens exist
+        const fcmTokens = Array.isArray(touser.fcmTokens) ? touser.fcmTokens.filter(token => token) : [];
         const notificationData = {
             title: "A new view request for you",
             body: description,
             clickAction: "http://localhost:5173/notify",
         };
+        console.log(touser)
         if (fcmTokens.length > 0) {
             await pushnotification({ fcmTokens, notificationData });
         }
+
         res.status(201).json({ msg: "Request created and notification sent successfully." });
     } catch (error) {
-        console.error("Error creating view request:", error);
+        console.error("Error creating view request:", error, { filedetails, description, userId });
         res.status(500).json({ msg: "Internal server error" });
     }
 };
+
 module.exports.handleConfirmView = async (req, res) => {
     const { requestId } = req.body;
     try {
