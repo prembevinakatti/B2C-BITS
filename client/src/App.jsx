@@ -11,6 +11,7 @@ function App() {
   const [count, setCount] = useState(0);
   const user = useSelector((state) => state.auth.authUser);
   useEffect(()=>{
+    if(user){
       Notification.requestPermission().then(async (permission) => {
         if (permission === "granted") {
           console.log("Notification permission granted.");
@@ -31,6 +32,8 @@ function App() {
           console.log("Notification permission denied.");
         }
       });
+    }
+      
   })
   return (
     <>

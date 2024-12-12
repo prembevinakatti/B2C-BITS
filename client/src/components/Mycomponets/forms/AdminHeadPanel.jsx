@@ -34,7 +34,7 @@ const AdminHeadPanel = () => {
       },
     };
     try {
-      const response = await axiosInstance.post("/api/categories/update", data);
+      const response = await axiosInstance.post("/update", data);
       if (response.status === 201) {
         toast.success("Main category and subcategories added successfully.");
         setMainCategory("");

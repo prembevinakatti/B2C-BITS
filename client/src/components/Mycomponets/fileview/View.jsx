@@ -510,7 +510,7 @@ const handleSendViewRequest =async (viewdata) =>{
                     {console.log(user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin"))}
                     <Button onClick={()=>handleView(file)}>{ user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin")||user.role=="Head"?"view":"checkout"}</Button>
                     {
-                      user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin")||user.role=="Head"?(<Button
+                      user.metamaskId==file.uploader?(<Button
                         onClick={() => handleDeleteFile(file)}
                         variant={"destructive"}
                         disabled={isDeleting} // Disable while deleting
