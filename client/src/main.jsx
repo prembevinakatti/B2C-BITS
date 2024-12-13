@@ -21,6 +21,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import View from "./components/Mycomponets/fileview/View";
 import AdminHeadPanel from "./components/Mycomponets/forms/AdminHeadPanel";
 import RequestViewPage from "./components/Mycomponets/showFiles/RequestViewPage";
+import HomePage from "./components/Mycomponets/HomePages/Home";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
         <Route path="/connectmetamask" element={<MetaMaskConnect />} />
 
         {/* restricted usrsroute */}
+        <Route path="/home" element={<HomePage />}/>
         <Route path="/createuser" element={<CreateForm />} />
         <Route path="/uploadfiles" element={<FileUpload />} />
         <Route path="/view" element={<View />} />

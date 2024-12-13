@@ -35,7 +35,7 @@ module.exports.handlenotify = async (req, res) => {
         body: notificationBody,
         clickAction: "http://localhost:5173/notify",
       };
-      console.log(fcmTokens,"fmctokken")
+      console.log(fcmTokens, "fmctokken");
       if (fcmTokens.length > 0) {
         await pushnotification({ fcmTokens, notificationData });
       }
@@ -46,7 +46,7 @@ module.exports.handlenotify = async (req, res) => {
       await NotificationModel.create({
         filedetails,
         title: notificationTitle,
-        to:lowermetamaskid,
+        to: lowermetamaskid,
         type: "view",
         userdata,
       });
@@ -56,7 +56,7 @@ module.exports.handlenotify = async (req, res) => {
         body: notificationBody,
         clickAction: "http://localhost:5173/notify",
       };
-      console.log(fcmTokens,"fmctokken")
+      console.log(fcmTokens, "fmctokken");
       if (fcmTokens.length > 0) {
         await pushnotification({ fcmTokens, notificationData });
       }
@@ -66,12 +66,10 @@ module.exports.handlenotify = async (req, res) => {
     res.status(200).json({ message: "Notification handled successfully." });
   } catch (error) {
     console.error("Error handling notification:", error);
-    res
-      .status(500)
-      .json({
-        message: "An error occurred while handling the notification.",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "An error occurred while handling the notification.",
+      error: error.message,
+    });
   }
 };
 module.exports.handleGetFileAccessStatus = async (req, res) => {
@@ -132,7 +130,7 @@ module.exports.handleCreateViewRequest = async (req, res) => {
     const fcmTokens = Array.isArray(touser.fcmTokens)
       ? touser.fcmTokens.filter((token) => token)
       : [];
-      console.log(fcmTokens,"fmctokken")
+    console.log(fcmTokens, "fmctokken");
     const notificationData = {
       title: "A new view request for you",
       body: description,
@@ -168,12 +166,12 @@ module.exports.handleConfirmView = async (req, res) => {
       return res.status(404).json({ msg: "Request not found." });
     }
     const lowermetamaskid = response.userId.toLowerCase();
-    const touser = await userModel.findOne({metamaskId:lowermetamaskid});
+    const touser = await userModel.findOne({ metamaskId: lowermetamaskid });
     if (!touser) {
       return res.status(404).json({ msg: "User not found." });
     }
     const fcmTokens = touser.fcmTokens || [];
-    console.log(fcmTokens,"fmctokken")
+    console.log(fcmTokens, "fmctokken");
     const notificationData = {
       title: "Your file request has been accepted",
       body: "Your request was approved by the admin.",
@@ -202,13 +200,13 @@ module.exports.handleReject = async (req, res) => {
       return res.status(404).json({ msg: "Request not found." });
     }
     const lowermetamaskid = response.userId.toLowerCase();
-    const touser = await userModel.findOne({metamaskId:lowermetamaskid});
+    const touser = await userModel.findOne({ metamaskId: lowermetamaskid });
     if (!touser) {
       return res.status(404).json({ msg: "User not found." });
     }
 
     const fcmTokens = touser.fcmTokens || [];
-    console.log(fcmTokens,"fmctokken")
+    console.log(fcmTokens, "fmctokken");
     const notificationData = {
       title: "Your file request has been rejected",
       body: "Your request was denied by the admin.",
@@ -228,7 +226,7 @@ module.exports.handleReject = async (req, res) => {
 module.exports.updateCategory = async (req, res) => {
   try {
     const { toUpdate, data } = req.body;
-    console.log("code reached here")
+    console.log("code reached here");
     if (!data || !data._id || !data.Subcategories) {
       return res.status(400).json({ message: "Invalid input data" });
     }
@@ -241,7 +239,7 @@ module.exports.updateCategory = async (req, res) => {
         .status(201)
         .json({ message: "Main category created successfully" });
     } else {
-      console.log("code reached here")
+      console.log("code reached here");
       const categoryData = await categoryModel.findOne({ _id: data._id });
       if (!categoryData) {
         return res.status(404).json({ message: "Category not found" });
@@ -252,7 +250,7 @@ module.exports.updateCategory = async (req, res) => {
         }
       });
       await categoryData.save();
-      console.log("code reached here")
+      console.log("code reached here");
       return res.status(200).json({ message: "Category updated successfully" });
     }
   } catch (error) {
@@ -265,14 +263,16 @@ module.exports.updateCategory = async (req, res) => {
 
 module.exports.getCategoryDataByRole = async (req, res) => {
   try {
-    console.log("code reached herae")
+    console.log("code reached herae");
     const { user } = req;
     let data;
     if (user.role === "Head") {
-      console.log("code reached heare")
+      console.log("code reached heare");
       const categories = await categoryModel.find({});
       if (!categories || categories.length === 0) {
-        return res.status(200).json({ message: "No categories found" ,data:[]});
+        return res
+          .status(200)
+          .json({ message: "No categories found", data: [] });
       }
       data = categories;
     } else {

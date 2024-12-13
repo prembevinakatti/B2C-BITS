@@ -88,7 +88,7 @@ function Navbar() {
                   <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
-                    onClick={() => handleNavigation("/")}
+                    onClick={() => handleNavigation("/home")}
                   >
                     <FaHome /> Home
                   </div>
