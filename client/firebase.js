@@ -4,15 +4,16 @@ class FirebaseService {
   constructor() {
     ////should change this config
     this.firebaseConfig = {
-      apiKey: "AIzaSyD7T4FKDtgJOH5dVsd1DfUk5mqZpyfIp6U",
-      authDomain: "servo-e8fdf.firebaseapp.com",
-      projectId: "servo-e8fdf",
-      storageBucket: "servo-e8fdf.appspot.com",
-      messagingSenderId: "169625164665",
-      appId: "1:169625164665:web:7844e2658b83a699a1ada8",
-      measurementId: "G-TZ70JLZ7QC",
+      apiKey: "AIzaSyCHgct4LWvS_4azoV7jLR2rWNxQkazxHPc",
+      authDomain: "hackelite-a5037.firebaseapp.com",
+      projectId: "hackelite-a5037",
+      storageBucket: "hackelite-a5037.firebasestorage.app",
+      messagingSenderId: "562332384915",
+      appId: "1:562332384915:web:b408fb39bdd68afc94d766",
+      measurementId: "G-FEC3EQWQL6"
     };
-    this.vapidKey ="BO1ZilxwyJJE9KisT1daLvlLEkx-FNtE4pI_Xwv6VmAxHXxJWBReavqJKot1L6SnHyKsg927PhKpaUYWlizuyRk";
+    
+    this.vapidKey ="BG1tha4LqkMaCDXoAfTeb_v-UEgeCPmRQ93gRYh5Y2jl3YgT9PSqfUeHwJuSPk9ffQpO4gtCHF8J63nhRBsfC-I";
     this.app = initializeApp(this.firebaseConfig);
     this.messaging = getMessaging(this.app);
   }
