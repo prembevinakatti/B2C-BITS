@@ -311,6 +311,7 @@ function View() {
       console.log("File deleted: ", response);
     } catch (error) {
       console.log("Error deleting file in client: ", error.message);
+      toast.error("Failed to delete file Or Only Uploader Can Delete Files");
     } finally {
       setIsDeleting(false); // Stop the loader
     }
@@ -521,7 +522,7 @@ function View() {
                         ? "view"
                         : "checkout"}
                     </Button>
-                    {user.metamaskId== file.uploader.toLowerCase() ? (
+                    {user.metamaskId == file.uploader ? (
                       <Button
                         onClick={() => handleDeleteFile(file)}
                         variant={"destructive"}
