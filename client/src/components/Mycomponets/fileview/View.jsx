@@ -345,6 +345,7 @@ function View() {
           data
         );
         if (response) {
+          alert("your activity is notifed to the uploader")
           console.log("your activity is notified");
         }
       } catch (error) {
