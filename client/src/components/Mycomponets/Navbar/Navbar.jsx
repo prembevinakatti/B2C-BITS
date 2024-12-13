@@ -3,7 +3,14 @@ import { Button } from "../../ui/button";
 import ModeTogle from "./ModeTogle";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMenu } from "react-icons/io5";
-import { FaUserCheck, FaHome, FaFileUpload, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaUserCheck,
+  FaHome,
+  FaFileUpload,
+  FaSignOutAlt,
+} from "react-icons/fa";
+import { FaUserAlt } from "react-icons/fa";
+
 import { RiAdminLine } from "react-icons/ri";
 import { MdDashboard, MdNotifications } from "react-icons/md";
 import { SiBlockchaindotcom } from "react-icons/si";
@@ -102,6 +109,14 @@ function Navbar() {
                   <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/createuser")}
+                  >
+                    <FaUserAlt />
+                    Create Admin Or Staff
+                  </div>
+                  <Separator className="my-3" />
+                  <div
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/requests")}
                   >
                     <MdNotifications /> Requests
@@ -118,7 +133,8 @@ function Navbar() {
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/connectmetamask")}
                   >
-                    <SiBlockchaindotcom/>Connect to Metamask
+                    <SiBlockchaindotcom />
+                    Connect to Metamask
                   </div>
                   <Separator className="my-3" />
                   {isLogined && (
