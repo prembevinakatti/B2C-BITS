@@ -170,6 +170,8 @@ module.exports.handleConfirmView = async (req, res) => {
     if (!touser) {
       return res.status(404).json({ msg: "User not found." });
     }
+    console.log("touser", touser);
+
     const fcmTokens = touser.fcmTokens || [];
     console.log(fcmTokens, "fmctokken");
     const notificationData = {
@@ -178,6 +180,8 @@ module.exports.handleConfirmView = async (req, res) => {
       clickAction: "http://localhost:5173/accepted",
     };
     if (fcmTokens.length > 0) {
+      console.log("reached");
+
       await pushnotification({ fcmTokens, notificationData });
     }
     res.status(200).json({ msg: "Request approved and notification sent." });

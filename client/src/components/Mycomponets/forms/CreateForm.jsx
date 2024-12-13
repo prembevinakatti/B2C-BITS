@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import axiosInstance from "@/utils/Axiosinstance";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function CreateForm() {
   const {
@@ -27,17 +28,18 @@ function CreateForm() {
     control,
     formState: { errors },
   } = useForm();
-  const authUser  = useSelector((state) => state.auth.authUser);
+  const authUser = useSelector((state) => state.auth.authUser);
   const [role, setRole] = useState("");
   const [branch, setBranch] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [categories,setcategories]=useState([])
-  const [subcatogary,setsubcatogary]=useState([])
+  const [categories, setcategories] = useState([]);
+  const [subcatogary, setsubcatogary] = useState([]);
+  const navigate = useNavigate();
   const onSubmit = async (data) => {
     console.log(data);
     try {
-      data.branch=branch
+      data.branch = branch;
       const response = await axios.post(
         `http://localhost:3000/api/user/createAdminOrStaff`,
         data,
@@ -49,6 +51,8 @@ function CreateForm() {
         }
       );
       console.log(response.data);
+      navigate("view");
+      toast.success("User account created successfully");
     } catch (error) {
       console.log("Error creating admin or staff account in client", error);
     }
@@ -59,23 +63,24 @@ function CreateForm() {
   const password = watch("password");
   function updatesubcatogary(selectedBranch) {
     const selectedCat = categories.find((cat) => cat._id === selectedBranch);
-    console.log(selectedCat.subcategories)
+    console.log(selectedCat.subcategories);
     return selectedCat ? selectedCat.subcategories : [];
   }
-  async function feachuseracees(){
+  async function feachuseracees() {
     try {
-      console.log("reached")
-     const response = await axiosInstance.get("/accesscontrol/getcategorydata");
-     setcategories(response.data.data)
-     console.log(response)
+      console.log("reached");
+      const response = await axiosInstance.get(
+        "/accesscontrol/getcategorydata"
+      );
+      setcategories(response.data.data);
+      console.log(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-  useEffect(()=>{
-    feachuseracees()
-  },[])
-
+  useEffect(() => {
+    feachuseracees();
+  }, []);
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -220,32 +225,30 @@ function CreateForm() {
 
               {/* Branch Selection */}
               <div>
-        <Label>Select Branch</Label>
-        <Select
-  onValueChange={(value) => {
-    setBranch(value);
-    const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
-    setsubcatogary(updatedSubcategories);
-    
-  }}
->
-
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select branch" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {categories.map((branch, index) => {
-                return (
-                  <SelectItem value={branch._id} key={index}>
-                    {branch._id}
-                  </SelectItem>
-                );
-              })}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+                <Label>Select Branch</Label>
+                <Select
+                  onValueChange={(value) => {
+                    setBranch(value);
+                    const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
+                    setsubcatogary(updatedSubcategories);
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select branch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {categories.map((branch, index) => {
+                        return (
+                          <SelectItem value={branch._id} key={index}>
+                            {branch._id}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
               {/* Department Access Selection */}
               <div>
@@ -260,9 +263,7 @@ function CreateForm() {
                       {subcatogary && (
                         <div className="border rounded-md p-4 mt-2">
                           <div className="grid grid-cols-2 gap-4">
-                        
                             {subcatogary.map((department, idx) => (
-                              
                               <div
                                 key={idx}
                                 className="flex items-center space-x-2"
