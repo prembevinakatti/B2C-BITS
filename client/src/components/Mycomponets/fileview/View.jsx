@@ -321,6 +321,7 @@ function View() {
       user.metamaskId === file.uploader ||
       (user.branch === file.branch && user.role === "Admin") ||
       user.role === "Head"
+      ||(user.branch===file.branch&&user.department.includes(file.department))
     ) {
       view(file);
     } else if (file.isPrivate === false) {
