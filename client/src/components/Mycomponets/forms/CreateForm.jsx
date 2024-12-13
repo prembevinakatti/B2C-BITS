@@ -211,10 +211,10 @@ function CreateForm() {
                       {authUser.role === "Head" ? (
                         <>
                           <SelectItem value="Admin">Admin</SelectItem>
-                          <SelectItem value="staff">Staff</SelectItem>
+                          <SelectItem value="Staff">Staff</SelectItem>
                         </>
                       ) : (
-                        <SelectItem value="staff">Staff</SelectItem>
+                        <SelectItem value="Staff">Staff</SelectItem>
                       )}
                     </SelectGroup>
                   </SelectContent>
