@@ -172,7 +172,9 @@ module.exports.handleConfirmView = async (req, res) => {
     }
     console.log("touser", touser);
 
-    const fcmTokens = touser.fcmTokens || [];
+    const fcmTokens = Array.isArray(touser.fcmTokens)
+      ? touser.fcmTokens.filter((token) => token)
+      : [];
     console.log(fcmTokens, "fmctokken");
     const notificationData = {
       title: "Your file request has been accepted",
@@ -209,7 +211,9 @@ module.exports.handleReject = async (req, res) => {
       return res.status(404).json({ msg: "User not found." });
     }
 
-    const fcmTokens = touser.fcmTokens || [];
+    const fcmTokens = Array.isArray(touser.fcmTokens)
+    ? touser.fcmTokens.filter((token) => token)
+    : [];
     console.log(fcmTokens, "fmctokken");
     const notificationData = {
       title: "Your file request has been rejected",
