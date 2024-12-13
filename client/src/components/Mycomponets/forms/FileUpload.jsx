@@ -18,6 +18,8 @@ import { useContract } from "@/ContractContext/ContractContext";
 import { FaFileImage } from "react-icons/fa";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { AiOutlineFilePdf } from "react-icons/ai"; // Added for PDF icon
+import axiosInstance from "@/utils/Axiosinstance";
+import Loader from "../Loader/Loader";
 
 const FileUpload = ({ onUploadComplete }) => {
   const [fileNames, setFileName] = useState([]); // Initialize as an array
@@ -35,13 +37,15 @@ const FileUpload = ({ onUploadComplete }) => {
   const [storagePath, setStoragePath] = useState("");
   const { state } = useContract();
   const contract = state.contract;
-
+  const [categories,setcategories]=useState([])
+  const [subcatogary,setsubcatogary]=useState([])
   useEffect(() => {
     if (!contract) {
       console.log("Contract is not initialized yet");
       return;
     }
     feachuseracees()
+
   }, [contract]);
 
   // Pinata API endpoint and authentication
@@ -177,71 +181,22 @@ const FileUpload = ({ onUploadComplete }) => {
   async function feachuseracees(){
     try {
      const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+     setcategories(response.data.data)
      console.log(response)
     } catch (error) {
       console.log(error)
     }
   }
+  function updatesubcatogary(selectedBranch) {
+    const selectedCat = categories.find((cat) => cat._id === selectedBranch);
+    return selectedCat ? selectedCat.subcategories : [];
+  }
+  
 
-  const categories = {
-    Administrative: [
-      "Institutional Policies",
-      "Employment Records",
-      "Salary Records",
-      "Annual Reports",
-      "Government Correspondence",
-    ],
-    CSE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    ECE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    ME: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    CE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    Fees_Finance: [
-      "Fee_Structure",
-      "Fee_Collection_Records",
-      "Financial_Reports",
-      "Scholarship_Records",
-    ],
-    Hostel: ["Allotment_Records", "Maintenance_Logs", "Fee_Records"],
-    IT_Systems: [
-      "Software_Licenses",
-      "Network_Configuration",
-      "Security_Reports",
-    ],
-    Events: ["Event_Approvals", "Cultural_Activities"],
-  };
-
+  if (!categories) {
+    return <Loader />;
+  }
+  
   return (
     <div className="max-w-2xl mx-auto p-6 border rounded-md shadow-md space-y-6">
       <h1 className="text-2xl font-bold text-center">File Upload with IPFS</h1>
@@ -249,20 +204,23 @@ const FileUpload = ({ onUploadComplete }) => {
       <div>
         <Label>Select Branch</Label>
         <Select
-          onValueChange={(value) => {
-            setBranch(value);
-            setPath(updatePath()); // Update path on branch change
-          }}
-        >
+  onValueChange={(value) => {
+    setBranch(value);
+    const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
+    setsubcatogary(updatedSubcategories);
+    setPath(updatePath());
+  }}
+>
+
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select branch" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {Object.keys(categories).map((branch, index) => {
+              {categories.map((branch, index) => {
                 return (
-                  <SelectItem value={branch} key={index}>
-                    {branch}
+                  <SelectItem value={branch._id} key={index}>
+                    {branch._id}
                   </SelectItem>
                 );
               })}
@@ -286,7 +244,7 @@ const FileUpload = ({ onUploadComplete }) => {
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              {categories[branch]?.map((departments, index) => (
+              {subcatogary.map((departments, index) => (
                 <SelectItem value={departments} key={index}>
                   {departments}
                 </SelectItem>

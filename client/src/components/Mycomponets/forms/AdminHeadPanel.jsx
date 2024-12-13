@@ -20,9 +20,9 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Loader from "../Loader/Loader";
 
 // Assuming you have a Loader component in the UI folder
-import Loader from "@/components/ui/loader"; // Adjust the path as per your project structure
 
 const AdminHeadPanel = () => {
   const [mainCategory, setMainCategory] = useState("");
