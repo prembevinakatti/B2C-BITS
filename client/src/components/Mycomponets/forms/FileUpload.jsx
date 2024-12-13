@@ -41,6 +41,7 @@ const FileUpload = ({ onUploadComplete }) => {
       console.log("Contract is not initialized yet");
       return;
     }
+    feachuseracees()
   }, [contract]);
 
   // Pinata API endpoint and authentication
@@ -173,6 +174,14 @@ const FileUpload = ({ onUploadComplete }) => {
       setLoading(false); // Set loading state to false after upload completes
     }
   };
+  async function feachuseracees(){
+    try {
+     const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+     console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const categories = {
     Administrative: [
