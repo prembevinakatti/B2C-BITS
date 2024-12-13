@@ -192,7 +192,6 @@ const FileUpload = ({ onUploadComplete }) => {
       }
    
    
-     console.log(response)
     } catch (error) {
       console.log(error)
     }
