@@ -21,6 +21,8 @@ import { AiOutlineFilePdf } from "react-icons/ai"; // Added for PDF icon
 import axiosInstance from "@/utils/Axiosinstance";
 import Loader from "../Loader/Loader";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const FileUpload = ({ onUploadComplete }) => {
   const [fileNames, setFileName] = useState([]); // Initialize as an array
@@ -40,6 +42,7 @@ const FileUpload = ({ onUploadComplete }) => {
   const contract = state.contract;
   const [categories, setcategories] = useState([]);
   const [subcatogary, setsubcatogary] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     if (!contract) {
       console.log("Contract is not initialized yet");
@@ -171,6 +174,8 @@ const FileUpload = ({ onUploadComplete }) => {
       await uploadDocs.wait();
 
       console.log("Upload to blockchain successfully");
+      navigate("/view");
+      toast.success("Upload to blockchain successfully");
     } catch (error) {
       console.error("Error uploading file to IPFS:", error);
       alert("Failed to upload file to IPFS.");
