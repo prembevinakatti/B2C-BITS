@@ -21,11 +21,15 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
+// Assuming you have a Loader component in the UI folder
+import Loader from "@/components/ui/loader"; // Adjust the path as per your project structure
+
 const AdminHeadPanel = () => {
   const [mainCategory, setMainCategory] = useState("");
   const [subCategories, setSubCategories] = useState([""]);
   const [fetchedMainCategories, setFetchedMainCategories] = useState([]);
   const [activeTab, setActiveTab] = useState("input");
+  const [loading, setLoading] = useState(false); // Add loading state
   const user = useSelector((state) => state.auth.authUser);
 
   const handleAddSubCategory = () => {
@@ -56,9 +60,14 @@ const AdminHeadPanel = () => {
       },
     };
 
+    setLoading(true); // Show loader when submission starts
+
     try {
-      console.log("code reached here")
-      const response = await axiosInstance.post("/accesscontrol/updatecatogory", data);
+      console.log("code reached here");
+      const response = await axiosInstance.post(
+        "/accesscontrol/updatecatogory",
+        data
+      );
       if (response.status === 201) {
         toast.success("Main category and subcategories updated successfully.");
         setMainCategory("");
@@ -67,15 +76,22 @@ const AdminHeadPanel = () => {
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while updating categories.");
+    } finally {
+      setLoading(false); // Hide loader when the process is complete
     }
   };
 
   const fetchAllMainCategories = async () => {
+    setLoading(true); // Show loader while fetching data
     try {
-      const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+      const response = await axiosInstance.get(
+        "/accesscontrol/getcategorydata"
+      );
       setFetchedMainCategories(response.data.data || []);
     } catch (error) {
       console.error("Error fetching main categories:", error);
+    } finally {
+      setLoading(false); // Hide loader after fetching is complete
     }
   };
 
@@ -90,14 +106,22 @@ const AdminHeadPanel = () => {
       <Card>
         <CardHeader>
           <h2 className="text-xl font-bold">
-            {user.role === "Head" ? "Head Control Panel" : "Admin Control Panel"}
+            {user.role === "Head"
+              ? "Head Control Panel"
+              : "Admin Control Panel"}
           </h2>
         </CardHeader>
         <CardContent>
+          {/* Loader appears during fetching or submitting */}
+          {loading && <Loader />}
+
           {user.role === "Head" && (
             <div>
               <Label htmlFor="mainCategory">Main Category</Label>
-              <Tabs defaultValue="input" onValueChange={(value) => setActiveTab(value)}>
+              <Tabs
+                defaultValue="input"
+                onValueChange={(value) => setActiveTab(value)}
+              >
                 <TabsList className="mt-2">
                   <TabsTrigger value="drop">Select from Existing</TabsTrigger>
                   <TabsTrigger value="input">Create New</TabsTrigger>
@@ -140,7 +164,9 @@ const AdminHeadPanel = () => {
                     <Input
                       placeholder={`Subcategory ${index + 1}`}
                       value={subCategory}
-                      onChange={(e) => handleSubCategoryChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handleSubCategoryChange(index, e.target.value)
+                      }
                     />
                     <Button onClick={() => handleRemoveSubCategory(index)}>
                       Remove
@@ -165,7 +191,9 @@ const AdminHeadPanel = () => {
                     <Input
                       placeholder={`Subcategory ${index + 1}`}
                       value={subCategory}
-                      onChange={(e) => handleSubCategoryChange(index, e.target.value)}
+                      onChange={(e) =>
+                        handleSubCategoryChange(index, e.target.value)
+                      }
                     />
                     <Button onClick={() => handleRemoveSubCategory(index)}>
                       Remove

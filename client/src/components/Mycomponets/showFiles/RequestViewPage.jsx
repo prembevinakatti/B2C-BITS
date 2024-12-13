@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"; // Replace with your ShadCN imports
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs"; // Replace with your ShadCN imports
-import { Card,
-    CardHeader,
-    CardContent,
-    CardFooter}from "@/components/ui/card"
-import {Button}from "@/components/ui/button"
-import {Skeleton}from "@/components/ui/skeleton"
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import axiosInstance from "@/utils/Axiosinstance";
 import { useSelector } from "react-redux";
+import Loader from "../Loader/Loader";
 const RequestCard = ({ request, onAction }) => (
   <Card className="mb-4">
     <CardHeader>
@@ -45,7 +43,7 @@ const RequestCard = ({ request, onAction }) => (
 
 const SkeletonLoader = () => (
   <div>
-    {[1, 2, 3,4,5].map((_, index) => (
+    {[1, 2, 3, 4, 5].map((_, index) => (
       <Skeleton key={index} className="h-24 w-full mb-4" />
     ))}
   </div>
@@ -60,7 +58,9 @@ const RequestViewPage = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`/services/requests?status=${tab}&id=${user.metamaskId}`);
+      const response = await axiosInstance.get(
+        `/services/requests?status=${tab}&id=${user.metamaskId}`
+      );
       setRequests(response.data.data);
     } catch (error) {
       console.error("Failed to fetch requests:", error);
@@ -72,12 +72,15 @@ const RequestViewPage = () => {
   // Handle action (Accept/Reject)
   const handleRequestAction = async (id, action) => {
     try {
-        if(action=="approved"){
-            await axiosInstance.post(`/accesscontrol/viewconform`,{requestId:id})
-        }
-        else{
-            await axiosInstance.post(`/accesscontrol/viewreject`,{requestId:id})
-        }
+      if (action == "approved") {
+        await axiosInstance.post(`/accesscontrol/viewconform`, {
+          requestId: id,
+        });
+      } else {
+        await axiosInstance.post(`/accesscontrol/viewreject`, {
+          requestId: id,
+        });
+      }
       fetchRequests(); // Refresh the data
     } catch (error) {
       console.error(`Failed to ${action} request:`, error);
@@ -101,7 +104,10 @@ const RequestViewPage = () => {
 
         <TabsContent value="pending">
           {loading ? (
-            <SkeletonLoader />
+            <>
+              <SkeletonLoader />
+              <Loader />
+            </>
           ) : (
             requests.map((req) => (
               <RequestCard

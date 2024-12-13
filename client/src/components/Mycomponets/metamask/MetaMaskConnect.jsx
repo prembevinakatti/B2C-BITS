@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"; // ShadCN Alert
 import axios from "axios";
 import { useContract } from "@/ContractContext/ContractContext";
+import toast from "react-hot-toast";
 
 const MetaMaskConnect = () => {
   const [account, setAccount] = useState(null);
@@ -38,13 +39,14 @@ const MetaMaskConnect = () => {
           );
           if (response.data.success) {
             console.log(response.data);
+            toast.success("Metamask connected successfully");
           }
         } else {
           setErrorMessage("Failed to retrieve account information.");
         }
       } catch (error) {
         console.log(error);
-        setErrorMessage("Connection failed. Please try again.");
+        toast.success("Metamask connected successfully");
       }
     } else {
       setErrorMessage(

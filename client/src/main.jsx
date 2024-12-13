@@ -31,9 +31,9 @@ const router = createBrowserRouter(
         {/* restricted usrsroute */}
         <Route path="/createuser" element={<CreateForm />} />
         <Route path="/uploadfiles" element={<FileUpload />} />
-        <Route path="/view" element={<View/>}/>
-        <Route path="/assignpanel" element={<AdminHeadPanel/>}/>
-        <Route path="/requests" element={<RequestViewPage/>}/>
+        <Route path="/view" element={<View />} />
+        <Route path="/assignpanel" element={<AdminHeadPanel />} />
+        <Route path="/requests" element={<RequestViewPage />} />
       </Route>
     </>
   )
@@ -45,6 +45,7 @@ createRoot(document.getElementById("root")).render(
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <PersistGate loading={null} persistor={persistor}>
           <ContractProvider>
+            <Toaster />
             <RouterProvider router={router} />
           </ContractProvider>
         </PersistGate>
