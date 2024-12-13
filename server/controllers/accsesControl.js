@@ -262,13 +262,14 @@ module.exports.updateCategory = async (req, res) => {
 
 module.exports.getCategoryDataByRole = async (req, res) => {
   try {
+    console.log("code reached herae")
     const { user } = req;
     let data;
-
-    if (user.role === "head") {
+    if (user.role === "Head") {
+      console.log("code reached heare")
       const categories = await categoryModel.find({});
       if (!categories || categories.length === 0) {
-        return res.status(404).json({ message: "No categories found" });
+        return res.status(200).json({ message: "No categories found" ,data:[]});
       }
       data = categories;
     } else {

@@ -430,7 +430,9 @@ const handleSendViewRequest =async (viewdata) =>{
  }
 
 }
-
+function canupload(){
+//     if(user.bracnh)
+// }
 
   return (
     <div className="min-h-screen p-3">
@@ -481,12 +483,15 @@ const handleSendViewRequest =async (viewdata) =>{
             <h1 className="text-2xl mt-3 w-full text-center underline">
               All Files Of {selectedFolder}
             </h1>
-            <div
-              className="bg-primary rounded-full p-2 text-center text-white cursor-pointer w-fit mx-auto mt-3"
-              onClick={handleuploadmodel}
-            >
-              Add File
-            </div>
+            {
+              canupload()?(  <div
+                className="bg-primary rounded-full p-2 text-center text-white cursor-pointer w-fit mx-auto mt-3"
+                onClick={handleuploadmodel}
+              >
+                Add File
+              </div>):(<></>)
+            }
+          
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
               {files?.map((file, index) => (
                 <div
