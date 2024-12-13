@@ -50,11 +50,11 @@ function View() {
   const [fileNames, setFileName] = useState([]); // Initialize as an array
   const [isDeleting, setIsDeleting] = useState(false); // Track file deletion state
   const [loading, setloading] = useState();
-  const [viewaccess,setviewaccess]=useState(false)
-  const [viewloader,setviewloader]=useState(false)
-  const [viewdata,setviewdata]=useState({})
-  const [description,setdescription]=useState("")
-  const [requestfiledata,setrequestfiledata]=useState()
+  const [viewaccess, setviewaccess] = useState(false);
+  const [viewloader, setviewloader] = useState(false);
+  const [viewdata, setviewdata] = useState({});
+  const [description, setdescription] = useState("");
+  const [requestfiledata, setrequestfiledata] = useState();
   const { state } = useContract();
   const contract = state.contract;
   const user = useSelector((state) => state.auth.authUser);
@@ -285,24 +285,27 @@ function View() {
       setIsDeleting(true); // Start the loader
       console.log("File: ", file.id);
       const response = await contract.deleteFile(file.id);
-      if(file.uploader!=user.metamaskId){
-        const data={
-          to:file.uploader,
-          type:"Delect",
-          userdata:{
-            name:user.name,
-            role:user.role,
-            metamaskId:user.metamaskId
+      if (file.uploader != user.metamaskId) {
+        const data = {
+          to: file.uploader,
+          type: "Delect",
+          userdata: {
+            name: user.name,
+            role: user.role,
+            metamaskId: user.metamaskId,
           },
-          filedetails:{
-            filename:file.fileName,
-            path:file.path
-          }
+          filedetails: {
+            filename: file.fileName,
+            path: file.path,
+          },
+        };
+        const response2 = await axiosInstance.post(
+          "/accesscontrol/notify",
+          data
+        );
+        if (response2) {
+          toast.success("your activity is notified to the file uploader");
         }
-       const response2=await axiosInstance.post("/accesscontrol/notify",data)
-       if(response2){
-        toast.success("your activity is notified to the file uploader")
-       }
       }
       console.log("File deleted: ", response);
     } catch (error) {
@@ -313,71 +316,70 @@ function View() {
   };
   const handleView = async (file) => {
     if (
-        user.metamaskId === file.uploader ||
-        (user.branch === file.branch && user.role === "Admin") ||
-        user.role === "Head"
+      user.metamaskId === file.uploader ||
+      (user.branch === file.branch && user.role === "Admin") ||
+      user.role === "Head"
     ) {
-       view(file)
-    } 
-    else if(file.isPrivate===false){
-      view(file)
+      view(file);
+    } else if (file.isPrivate === false) {
+      view(file);
       try {
-        const data={
-          to:file.uploader,
-          type:"View",
-          userdata:{
-            name:user.name,
-            role:user.role,
-            metamaskId:user.metamaskId
+        const data = {
+          to: file.uploader,
+          type: "View",
+          userdata: {
+            name: user.name,
+            role: user.role,
+            metamaskId: user.metamaskId,
           },
-          filedetails:{
-            filename:file.fileName,
-            path:file.path
-          }
-        }
-        const response=await axiosInstance.post("/accesscontrol/notify",data)
-        if(response){
-          console.log("your activity is notified")
+          filedetails: {
+            filename: file.fileName,
+            path: file.path,
+          },
+        };
+        const response = await axiosInstance.post(
+          "/accesscontrol/notify",
+          data
+        );
+        if (response) {
+          console.log("your activity is notified");
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
+      }
+    } else {
+      setrequestfiledata(file);
+      setviewaccess(true);
+      setviewloader(true);
+      try {
+        const data = { fileId: file.id, userId: user.metamaskId };
+        console.log(data, "console from data");
+        const reponse = await axiosInstance.post(
+          "/accesscontrol/getfileaccessstatus",
+          data
+        );
+        if (reponse.data.data) {
+          setviewdata(reponse.data.data);
+          setviewloader(false);
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
-    
-    else {
-      setrequestfiledata(file)
-      setviewaccess(true)
-      setviewloader(true)
-       try {
-        const data={fileId:file.id,userId:user.metamaskId}
-        console.log(data,"console from data")
-         const reponse=await axiosInstance.post("/accesscontrol/getfileaccessstatus",data)
-         if(reponse.data.data){
-           setviewdata(reponse.data.data)
-           setviewloader(false)
-         }
-       } catch (error) {
-          console.log(error)
-       }
+  };
 
-        
-    }
+  async function view(file) {
+    const pinataGatewayUrl = `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`;
 
-    
-};
-
-async function view (file){
-  const pinataGatewayUrl = `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`;
-
-  try {
+    try {
       // Fetch the file from Pinata
       const response = await axios.get(pinataGatewayUrl, {
-          responseType: "arraybuffer", // Fetch binary data
+        responseType: "arraybuffer", // Fetch binary data
       });
 
       // Create a Blob from the binary data
       const blob = new Blob([response.data], {
-          type: response.headers["content-type"], // Use the content type returned by the server
+        type: response.headers["content-type"], // Use the content type returned by the server
       });
 
       // Generate a URL for the Blob
@@ -385,52 +387,52 @@ async function view (file){
 
       // Handle image or PDF
       if (response.headers["content-type"].startsWith("image")) {
-          // Open image in a new tab or display in the page
-          window.open(fileURL, "_blank"); // Opens in a new tab
+        // Open image in a new tab or display in the page
+        window.open(fileURL, "_blank"); // Opens in a new tab
       } else if (response.headers["content-type"] === "application/pdf") {
-          // Open PDF in a new tab or embed in the page
-          window.open(fileURL, "_blank"); // Opens PDF in a new tab
+        // Open PDF in a new tab or embed in the page
+        window.open(fileURL, "_blank"); // Opens PDF in a new tab
       } else {
-          // For other file types, download the file
-          const link = document.createElement("a");
-          link.href = fileURL;
-          link.download = file.fileName || "file";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+        // For other file types, download the file
+        const link = document.createElement("a");
+        link.href = fileURL;
+        link.download = file.fileName || "file";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-      setviewaccess(false)
-  } catch (error) {
+      setviewaccess(false);
+    } catch (error) {
       console.error("Error fetching file:", error);
       alert("Failed to fetch the file.");
+    }
   }
-}
-const handleSendViewRequest =async (viewdata) =>{
-  setviewloader(true)
-    const userId= user.metamaskId
-    const data={
-      filedetails:{
-        fileId:requestfiledata.id,
-        to:requestfiledata.uploader
+  const handleSendViewRequest = async (viewdata) => {
+    setviewloader(true);
+    const userId = user.metamaskId;
+    const data = {
+      filedetails: {
+        fileId: requestfiledata.id,
+        to: requestfiledata.uploader,
       },
       description,
-      userId
+      userId,
+    };
+    try {
+      const response = await axiosInstance.post(
+        "/accesscontrol/createviewrequest",
+        data
+      );
+      if (response) {
+        toast.success("sucsessfully send the request to the uploader");
+        setviewaccess(false);
+        setviewloader(false);
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
     }
- try {
-   const response = await axiosInstance.post("/accesscontrol/createviewrequest",data)
-     if(response){
-       toast.success("sucsessfully send the request to the uploader")
-       setviewaccess(false)
-       setviewloader(false)
-     }
-     console.log(response)
-     
- } catch (error) {
-  console.log(error)
- }
-
-}
-
+  };
 
   return (
     <div className="min-h-screen p-3">
@@ -507,19 +509,28 @@ const handleSendViewRequest =async (viewdata) =>{
                     {file?.fileName}
                   </a>
                   <div className="flex gap-2">
-                    {console.log(user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin"))}
-                    <Button onClick={()=>handleView(file)}>{ user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin")||user.role=="Head"?"view":"checkout"}</Button>
-                    {
-                      user.metamaskId==file.uploader?(<Button
+                    {console.log(
+                      user.metamaskId == file.uploader ||
+                        (user.branch == file.branch && user.role == "Admin")
+                    )}
+                    <Button onClick={() => handleView(file)}>
+                      {user.metamaskId == file.uploader ||
+                      (user.branch == file.branch && user.role == "Admin") ||
+                      user.role == "Head"
+                        ? "view"
+                        : "checkout"}
+                    </Button>
+                    {user.metamaskId == file.uploader ? (
+                      <Button
                         onClick={() => handleDeleteFile(file)}
                         variant={"destructive"}
                         disabled={isDeleting} // Disable while deleting
                       >
                         {isDeleting ? "Deleting..." : "Delete"}
-                      
-                      </Button>):(  <div></div>)
-                    }
-                    
+                      </Button>
+                    ) : (
+                      <div></div>
+                    )}
                   </div>
                   <p
                     className="underline ml-2 mt-3 cursor-pointer"
@@ -730,79 +741,78 @@ const handleSendViewRequest =async (viewdata) =>{
             </DialogContent>
           </Dialog>
         )}
-        
-  {viewaccess && (
-    <Dialog open={viewaccess} onClose={() => setviewaccess(false)}>
-      <DialogContent>
-        <Card>
-          {viewloader ? (
-            <div className="flex justify-center items-center h-20">
-              <p>Loading...</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {viewdata.type === false ? (
-                <div className="space-y-4">
-                  <p className="text-lg font-medium text-gray-700">
-                    You don't have access to view this file.
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Please provide a description for your request:
-                  </p>
-                  <Input
-                    placeholder="Enter your description"
-                    onChange={(e) => setdescription(e.target.value)}
-                  />
-                  <Button
-                    className="w-full bg-blue-500 text-white"
-                    onClick={() => handleSendViewRequest(viewdata)}
-                  >
-                    Request for View
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {viewdata.data.status === "pending" ? (
-                    <div className="text-center">
+
+        {viewaccess && (
+          <Dialog open={viewaccess} onClose={() => setviewaccess(false)}>
+            <DialogContent>
+              <Card>
+                {viewloader ? (
+                  <div className="flex justify-center items-center h-20">
+                    <p>Loading...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {viewdata.type === false ? (
+                      <div className="space-y-4">
+                        <p className="text-lg font-medium text-gray-700">
+                          You don't have access to view this file.
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Please provide a description for your request:
+                        </p>
+                        <Input
+                          placeholder="Enter your description"
+                          onChange={(e) => setdescription(e.target.value)}
+                        />
+                        <Button
+                          className="w-full bg-blue-500 text-white"
+                          onClick={() => handleSendViewRequest(viewdata)}
+                        >
+                          Request for View
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {viewdata.data.status === "pending" ? (
+                          <div className="text-center">
+                            <Button
+                              disabled
+                              variant="destructive"
+                              className="w-full"
+                            >
+                              Pending
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <p className="text-lg font-medium text-green-600">
+                              You have permission to view the file.
+                            </p>
+                            <Button
+                              className="w-full bg-green-500 text-white"
+                              onClick={() => view(requestfiledata)}
+                            >
+                              View File
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className="text-right">
                       <Button
-                        disabled
-                        variant="destructive"
+                        variant="outline"
                         className="w-full"
+                        onClick={() => setviewaccess(false)}
                       >
-                        Pending
+                        Close
                       </Button>
                     </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <p className="text-lg font-medium text-green-600">
-                        You have permission to view the file.
-                      </p>
-                      <Button
-                        className="w-full bg-green-500 text-white"
-                        onClick={() => view(requestfiledata)}
-                      >
-                        View File
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className="text-right">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setviewaccess(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </div>
-          )}
-        </Card>
-      </DialogContent>
-    </Dialog>
-  )}
-  
+                  </div>
+                )}
+              </Card>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
