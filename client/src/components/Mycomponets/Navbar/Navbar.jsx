@@ -107,7 +107,7 @@ function Navbar() {
                     <FaFileUpload /> Upload Files
                   </div>
                   <Separator className="my-3" />
-                  {isLogined.role !== "Staff" && (
+                  {isLogined?.role !== "Staff" && (
                     <div
                       className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                       onClick={() => handleNavigation("/createuser")}
@@ -124,7 +124,7 @@ function Navbar() {
                     <MdNotifications /> Requests
                   </div>
                   <Separator className="my-3" />
-                  {isLogined.role === "Head" && (
+                  {isLogined?.role === "Head" && (
                     <div
                       className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                       onClick={() => handleNavigation("/assignpanel")}
