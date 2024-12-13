@@ -276,7 +276,7 @@ module.exports.getCategoryDataByRole = async (req, res) => {
       }
       data = categories;
     } else {
-      const { maincategory } = req.body;
+      const { maincategory } = req.query;
       if (!maincategory) {
         return res.status(400).json({ message: "maincategory is required" });
       }

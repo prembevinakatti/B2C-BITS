@@ -20,6 +20,7 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { AiOutlineFilePdf } from "react-icons/ai"; // Added for PDF icon
 import axiosInstance from "@/utils/Axiosinstance";
 import Loader from "../Loader/Loader";
+import { useSelector } from "react-redux";
 
 const FileUpload = ({ onUploadComplete }) => {
   const [fileNames, setFileName] = useState([]); // Initialize as an array
@@ -47,7 +48,7 @@ const FileUpload = ({ onUploadComplete }) => {
     feachuseracees()
 
   }, [contract]);
-
+  const user = useSelector((state) => state.auth.authUser);
   // Pinata API endpoint and authentication
   const pinataApiUrl = "https://api.pinata.cloud/pinning/pinFileToIPFS";
   const pinataApiKey = import.meta.env.VITE_PINATA_API_KEY; // Store your Pinata API key in .env
@@ -180,7 +181,15 @@ const FileUpload = ({ onUploadComplete }) => {
   };
   async function feachuseracees(){
     try {
-     const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+      if(user.role=="Head"){
+        const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+      }else{
+        setcategories([{
+          _id:user.branch,
+          subcategories:user.department
+        }])
+      }
+   
      setcategories(response.data.data)
      console.log(response)
     } catch (error) {

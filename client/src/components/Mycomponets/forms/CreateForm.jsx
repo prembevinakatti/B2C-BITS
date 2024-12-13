@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Card } from "../../ui/card";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import axios from "axios";
+import axiosInstance from "@/utils/Axiosinstance";
+import { useSelector } from "react-redux";
 
 function CreateForm() {
   const {
@@ -25,84 +27,17 @@ function CreateForm() {
     control,
     formState: { errors },
   } = useForm();
-
-  // Mocked auth user
-  const authUser = {
-    _id: { $oid: "6751f796037e1e2b564fd0bd" },
-    fullName: "head01",
-    email: "vishhhhhh03@gmail.com",
-    branch: "unknown",
-    department: "unknown",
-    role: "Head",
-  };
-
-  const categories = {
-    Administrative: [
-      "Institutional Policies",
-      "Employment Records",
-      "Salary Records",
-      "Annual Reports",
-      "Government Correspondence",
-    ],
-    CSE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    ECE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    ME: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    CE: [
-      "Curriculum_Syllabus",
-      "Faculty_Records",
-      "Course_Materials",
-      "Lab_Records",
-      "Student_Records",
-      "Research_Projects",
-      "Exam_Results",
-    ],
-    Fees_Finance: [
-      "Fee_Structure",
-      "Fee_Collection_Records",
-      "Financial_Reports",
-      "Scholarship_Records",
-    ],
-    Hostel: ["Allotment_Records", "Maintenance_Logs", "Fee_Records"],
-    IT_Systems: [
-      "Software_Licenses",
-      "Network_Configuration",
-      "Security_Reports",
-    ],
-    Events: ["Event_Approvals", "Cultural_Activities"],
-  };
-
+  const authUser  = useSelector((state) => state.auth.authUser);
   const [role, setRole] = useState("");
   const [branch, setBranch] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [categories,setcategories]=useState([])
+  const [subcatogary,setsubcatogary]=useState([])
   const onSubmit = async (data) => {
     console.log(data);
     try {
+      data.branch=branch
       const response = await axios.post(
         `http://localhost:3000/api/user/createAdminOrStaff`,
         data,
@@ -122,6 +57,25 @@ function CreateForm() {
   };
 
   const password = watch("password");
+  function updatesubcatogary(selectedBranch) {
+    const selectedCat = categories.find((cat) => cat._id === selectedBranch);
+    console.log(selectedCat.subcategories)
+    return selectedCat ? selectedCat.subcategories : [];
+  }
+  async function feachuseracees(){
+    try {
+      console.log("reached")
+     const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+     setcategories(response.data.data)
+     console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(()=>{
+    feachuseracees()
+  },[])
+
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -266,30 +220,32 @@ function CreateForm() {
 
               {/* Branch Selection */}
               <div>
-                <Label htmlFor="branch">Select the Branch</Label>
-                <Select
-                  onValueChange={(value) => {
-                    setBranch(value);
-                    setValue("branch", value);
-                  }}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Branch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {Object.keys(categories).map((key, index) => (
-                        <SelectItem key={index} value={key}>
-                          {key}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                {errors.branch && (
-                  <p className="text-red-500">Branch is required</p>
-                )}
-              </div>
+        <Label>Select Branch</Label>
+        <Select
+  onValueChange={(value) => {
+    setBranch(value);
+    const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
+    setsubcatogary(updatedSubcategories);
+    
+  }}
+>
+
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select branch" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {categories.map((branch, index) => {
+                return (
+                  <SelectItem value={branch._id} key={index}>
+                    {branch._id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
 
               {/* Department Access Selection */}
               <div>
@@ -301,10 +257,12 @@ function CreateForm() {
                   rules={{ required: "Please select at least one department" }}
                   render={({ field }) => (
                     <div className="space-y-2">
-                      {branch && categories[branch] && (
+                      {subcatogary && (
                         <div className="border rounded-md p-4 mt-2">
                           <div className="grid grid-cols-2 gap-4">
-                            {categories[branch].map((department, idx) => (
+                        
+                            {subcatogary.map((department, idx) => (
+                              
                               <div
                                 key={idx}
                                 className="flex items-center space-x-2"

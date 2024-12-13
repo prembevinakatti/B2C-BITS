@@ -1,91 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Card, CardHeader, CardContent } from "../../ui/card";
+import { Separator } from "../../ui/separator";
+import { Button } from "../../ui/button";
+import { FaRegLightbulb } from "react-icons/fa6";
+import { RiFolderShield2Fill } from "react-icons/ri";
+import { LuGlobeLock } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../../utils/Axiosinstance";
-import { toast } from "react-hot-toast";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "@/components/ui/select";
 
 const HomePage = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const user = useSelector((state) => state.auth.authUser);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await axiosInstance.get("/accesscontrol/getcategorydata");
-      if (response.status === 200) {
-        setCategories(response.data.data || []);
-      } else {
-        toast.error(response.data.message || "Error fetching categories");
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      toast.error("An error occurred while fetching categories.");
-    }
-  };
-
-  useEffect(() => {
-    if (user.role === "Head") {
-      fetchCategories();
-    } else {
-      // Fetch categories based on the user's role and main category selection
-      setCategories([user.branch]);  // Assuming user.branch is their main category
-    }
-  }, [user]);
+  console.log(user)
+  const navigate = useNavigate();
 
   return (
-    <div className="p-8">
-      <Card>
-        <CardHeader>
-          <h2 className="text-xl font-bold">
-            Home Page - {user.role} Panel
-          </h2>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <Label>Categories</Label>
-            {user.role === "Head" ? (
-              <Select onValueChange={setSelectedCategory}>
-                <SelectTrigger className="w-full mt-2">
-                  <SelectValue placeholder="Select a Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {categories.map((category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category._id}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="mt-2">
-                <p>{user.branch}</p>
-              </div>
-            )}
-          </div>
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-8">
+      {/* Hero Section */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">
+          Welcome to Decentralized University
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Empowering knowledge and secure file management for a decentralized future.
+        </p>
+        {/* Show "Get Started" button only if user is not logged in */}
+        {user!==null && (
+          <Button className="mt-6" onClick={() => navigate("/view")}>Get Started</Button>
+        )}
+      </div>
 
-          <div className="mt-6">
-            <Label>Departments</Label>
-            {categories.length === 0 ? (
-              <p>No departments available.</p>
-            ) : (
-              categories.map((category) => (
-                <div key={category._id} className="mt-4">
-                  <h3>{category._id}</h3>
-                  <ul>
-                    {category.subcategories?.map((sub, index) => (
-                      <li key={index}>{sub}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <Separator className="my-8 w-full max-w-3xl" />
+
+      {/* Features Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+        <Card className="text-center p-6">
+          <CardHeader>
+            <FaRegLightbulb size={32} className="mx-auto text-primary mb-2" />
+            <h3 className="text-xl font-semibold">Innovative Learning</h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Access a decentralized platform that ensures secure and transparent education resources.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center p-6">
+          <CardHeader>
+            <RiFolderShield2Fill size={32} className="mx-auto text-primary mb-2" />
+            <h3 className="text-xl font-semibold">Secure File Storage</h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Store and manage your academic files with cutting-edge decentralized technology.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="text-center p-6">
+          <CardHeader>
+            <LuGlobeLock size={32} className="mx-auto text-primary mb-2" />
+            <h3 className="text-xl font-semibold">Global Access</h3>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">
+              Collaborate and connect with peers globally in a trusted decentralized ecosystem.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Separator className="my-8 w-full max-w-3xl" />
     </div>
   );
 };

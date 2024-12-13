@@ -42,7 +42,7 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(setAuthUser(null));
-    axiosInstance.post("/logout");
+      navigate("/home")
   };
 
   const handleNavigation = (path) => {

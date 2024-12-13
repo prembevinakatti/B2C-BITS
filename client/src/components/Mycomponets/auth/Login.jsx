@@ -41,7 +41,7 @@ function Login() {
       if (userdata.metamaskId == null) {
         navigate("/connectmetamask");
       } else {
-        navigate(`${userdata.role}/home`);
+        navigate(`/home`);
       }
     } catch (error) {
       toast.error("Login failed. Please try again.");

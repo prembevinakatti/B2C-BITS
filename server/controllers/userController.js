@@ -103,6 +103,15 @@ module.exports.createAdminOrStaff = async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    console.log( fullName,
+      branch,
+      department,
+      role,
+      password,
+      confirmPassword,
+      email,
+      userId,
+      phoneNumber)
 
     if (
       !fullName ||
@@ -117,7 +126,15 @@ module.exports.createAdminOrStaff = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
+console.log( fullName,
+  branch,
+  department,
+  role,
+  password,
+  confirmPassword,
+  email,
+  userId,
+  phoneNumber)
     const headUser = await userModel.findOne({ email: user.email });
 
     if (password !== confirmPassword) {
