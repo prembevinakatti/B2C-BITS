@@ -42,7 +42,7 @@ function Navbar() {
 
   const handleLogout = () => {
     dispatch(setAuthUser(null));
-      navigate("/home")
+    navigate("/home");
   };
 
   const handleNavigation = (path) => {
@@ -107,13 +107,15 @@ function Navbar() {
                     <FaFileUpload /> Upload Files
                   </div>
                   <Separator className="my-3" />
-                  <div
-                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
-                    onClick={() => handleNavigation("/createuser")}
-                  >
-                    <FaUserAlt />
-                    Create Admin Or Staff
-                  </div>
+                  {isLogined.role !== "Staff" && (
+                    <div
+                      className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                      onClick={() => handleNavigation("/createuser")}
+                    >
+                      <FaUserAlt />
+                      Create Admin Or Staff
+                    </div>
+                  )}
                   <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
