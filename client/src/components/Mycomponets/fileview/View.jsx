@@ -34,6 +34,7 @@ import { useContract } from "@/ContractContext/ContractContext";
 import { useSelector } from "react-redux";
 import axiosInstance from "@/utils/Axiosinstance";
 import toast from "react-hot-toast";
+import Loader from "../Loader/Loader";
 function View() {
   const [breadcrumbs, setBreadcrumbs] = useState(["Home"]);
   const [folders, setFolders] = useState([]);
@@ -269,7 +270,7 @@ function View() {
   };
 
   if (branchesLoading || departmentsLoading || foldersLoading || filesLoading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   if (branchesError || departmentsError || foldersError || filesError) {
