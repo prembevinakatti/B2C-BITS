@@ -38,15 +38,14 @@ const FileUpload = ({ onUploadComplete }) => {
   const [storagePath, setStoragePath] = useState("");
   const { state } = useContract();
   const contract = state.contract;
-  const [categories,setcategories]=useState([])
-  const [subcatogary,setsubcatogary]=useState([])
+  const [categories, setcategories] = useState([]);
+  const [subcatogary, setsubcatogary] = useState([]);
   useEffect(() => {
     if (!contract) {
       console.log("Contract is not initialized yet");
       return;
     }
-    feachuseracees()
-
+    feachuseracees();
   }, [contract]);
   const user = useSelector((state) => state.auth.authUser);
   // Pinata API endpoint and authentication
@@ -179,50 +178,50 @@ const FileUpload = ({ onUploadComplete }) => {
       setLoading(false); // Set loading state to false after upload completes
     }
   };
-  async function feachuseracees(){
+  async function feachuseracees() {
     try {
-      if(user.role=="Head"){
-        const response = await axiosInstance.get("/accesscontrol/getcategorydata");
-        setcategories(response.data.data)
-      }else{
-        setcategories([{
-          _id:user.branch,
-          subcategories:user.department
-        }])
+      if (user.role == "Head") {
+        const response = await axiosInstance.get(
+          "/accesscontrol/getcategorydata"
+        );
+        setcategories(response.data.data);
+      } else {
+        setcategories([
+          {
+            _id: user.branch,
+            subcategories: user.department,
+          },
+        ]);
       }
-   
-   
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   function updatesubcatogary(selectedBranch) {
     const selectedCat = categories.find((cat) => cat._id === selectedBranch);
     return selectedCat ? selectedCat.subcategories : [];
   }
-  
 
   if (!categories) {
     return <Loader />;
   }
-  
+
   return (
     <div className="max-w-2xl mx-auto p-6 border rounded-md shadow-md space-y-6">
       <h1 className="text-2xl font-bold text-center">File Upload with IPFS</h1>
       {/* Branch */}
       <div>
-        <Label>Select Branch</Label>
+        <Label>Select Category</Label>
         <Select
-  onValueChange={(value) => {
-    setBranch(value);
-    const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
-    setsubcatogary(updatedSubcategories);
-    setPath(updatePath());
-  }}
->
-
+          onValueChange={(value) => {
+            setBranch(value);
+            const updatedSubcategories = updatesubcatogary(value); // Use the new branch value
+            setsubcatogary(updatedSubcategories);
+            setPath(updatePath());
+          }}
+        >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select branch" />
+            <SelectValue placeholder="Select Category" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
@@ -240,7 +239,7 @@ const FileUpload = ({ onUploadComplete }) => {
 
       {/* Department */}
       <div>
-        <Label>Select Department</Label>
+        <Label>Select Sub Category</Label>
         <Select
           disabled={!branch}
           onValueChange={(value) => {
@@ -249,7 +248,7 @@ const FileUpload = ({ onUploadComplete }) => {
           }}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select department" />
+            <SelectValue placeholder="Select Sub Category" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>

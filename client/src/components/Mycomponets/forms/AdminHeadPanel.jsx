@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Loader from "../Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 // Assuming you have a Loader component in the UI folder
 
@@ -31,6 +32,7 @@ const AdminHeadPanel = () => {
   const [activeTab, setActiveTab] = useState("input");
   const [loading, setLoading] = useState(false); // Add loading state
   const user = useSelector((state) => state.auth.authUser);
+  const navigate = useNavigate();
 
   const handleAddSubCategory = () => {
     setSubCategories([...subCategories, ""]);
@@ -70,6 +72,7 @@ const AdminHeadPanel = () => {
       );
       if (response.status === 201) {
         toast.success("Main category and subcategories updated successfully.");
+        navigate("/view");
         setMainCategory("");
         setSubCategories([""]);
       }
