@@ -183,6 +183,7 @@ const FileUpload = ({ onUploadComplete }) => {
     try {
       if(user.role=="Head"){
         const response = await axiosInstance.get("/accesscontrol/getcategorydata");
+        setcategories(response.data.data)
       }else{
         setcategories([{
           _id:user.branch,
@@ -190,7 +191,7 @@ const FileUpload = ({ onUploadComplete }) => {
         }])
       }
    
-     setcategories(response.data.data)
+   
      console.log(response)
     } catch (error) {
       console.log(error)
