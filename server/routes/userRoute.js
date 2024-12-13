@@ -14,6 +14,6 @@ router.route("/createAccount").post(createAccount);
 router.route("/loginAccount").post(loginAccount);
 router.route("/createAdminOrStaff").post(isAuthenticated, createAdminOrStaff);
 router.route("/setMetamaskId").post(isAuthenticated, setMetamaskId);
-router.route("/getUserByMetamaskId").get(isAuthenticated, getUserByMetamaskId);
+router.route("/getUserByMetamaskId").post(isAuthenticated, getUserByMetamaskId);
 
 module.exports = router;

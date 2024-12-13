@@ -59,8 +59,18 @@ function View() {
   const { state } = useContract();
   const contract = state.contract;
   const user = useSelector((state) => state.auth.authUser);
-  const handleKnowMoreClick = (file) => {
-    setSelectedFile(file);
+  const handleKnowMoreClick = async(file) => {
+    try {
+     const response= await axiosInstance.post("/user/getUserByMetamaskId",{metamaskId:file.uploader})
+     console.log(response)
+      file.fullName=response.data.user.fullName
+      console.log(file.fullName)
+    setSelectedFile(file)
+      
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
   const hangleuploadmodel = () => {
     setuploadmodel(true);
@@ -487,12 +497,17 @@ function View() {
             <h1 className="text-2xl mt-3 w-full text-center underline">
               All Files Of {selectedFolder}
             </h1>
-            <div
+            {
+               user.role ==="Head" ||
+               (user.branch ===files[0]?.branch&& user?.role === "Admin") 
+             ||(user?.branch===files[0]?.branch&&user?.department.includes(files[0]?.department))?(   <div
               className="bg-primary rounded-full p-2 text-center text-white cursor-pointer w-fit mx-auto mt-3"
               onClick={handleuploadmodel}
             >
               Add File
-            </div>
+            </div>):(<div></div>)
+            }
+         
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
               {files?.map((file, index) => (
                 <div
@@ -504,14 +519,17 @@ function View() {
                   ) : (
                     <FaRegFileLines size={60} className="mb-2 text-blue-500" />
                   )}
-                  <a
-                    href={file?.path || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 font-medium truncate text-center"
-                  >
-                    {file?.fileName}
-                  </a>
+    <div className="w-full">  {/* Parent container with full width */}
+  <a
+    href={file?.path || "#"}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-blue-600 font-medium truncate block w-full max-w-xs"  // Ensures full width or max width
+  >
+    {file?.fileName}
+  </a>
+</div>
+
                   <div className="flex gap-2">
                     {console.log(
                       user.metamaskId == file.uploader ||
@@ -611,12 +629,12 @@ function View() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="ipfsHash" className="text-right">
-                    IPFS Hash
+                  <Label htmlFor="uploader" className="text-right">
+                    Uploader Name
                   </Label>
                   <Input
-                    id="ipfsHash"
-                    defaultValue={selectedFile?.ipfsHash}
+                    id="uploader"
+                    defaultValue={selectedFile?.fullName}
                     className="col-span-3"
                     readOnly
                   />

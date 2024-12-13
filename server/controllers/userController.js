@@ -218,13 +218,13 @@ module.exports.setMetamaskId = async (req, res) => {
 
 module.exports.getUserByMetamaskId = async (req, res) => {
   try {
-    const metamaskId = req.body;
-
+    const {metamaskId} = req.body;
+    console.log(metamaskId)
     if (!metamaskId) {
       return res.status(400).json({ message: "Metamask ID is required" });
     }
-
-    const user = await userModel.findOne({ metamaskId });
+    const lowermetamak=metamaskId.toLowerCase()
+    const user = await userModel.findOne({ metamaskId:lowermetamak });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
