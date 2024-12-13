@@ -50,11 +50,11 @@ function View() {
   const [fileNames, setFileName] = useState([]); // Initialize as an array
   const [isDeleting, setIsDeleting] = useState(false); // Track file deletion state
   const [loading, setloading] = useState();
-  const [viewaccess, setviewaccess] = useState(false);
-  const [viewloader, setviewloader] = useState(false);
-  const [viewdata, setviewdata] = useState({});
-  const [description, setdescription] = useState("");
-  const [requestfiledata, setrequestfiledata] = useState();
+  const [viewaccess,setviewaccess]=useState(false)
+  const [viewloader,setviewloader]=useState(false)
+  const [viewdata,setviewdata]=useState({})
+  const [description,setdescription]=useState("")
+  const [requestfiledata,setrequestfiledata]=useState()
   const { state } = useContract();
   const contract = state.contract;
   const user = useSelector((state) => state.auth.authUser);
@@ -285,27 +285,24 @@ function View() {
       setIsDeleting(true); // Start the loader
       console.log("File: ", file.id);
       const response = await contract.deleteFile(file.id);
-      if (file.uploader != user.metamaskId) {
-        const data = {
-          to: file.uploader,
-          type: "Delect",
-          userdata: {
-            name: user.name,
-            role: user.role,
-            metamaskId: user.metamaskId,
+      if(file.uploader!=user.metamaskId){
+        const data={
+          to:file.uploader,
+          type:"Delect",
+          userdata:{
+            name:user.name,
+            role:user.role,
+            metamaskId:user.metamaskId
           },
-          filedetails: {
-            filename: file.fileName,
-            path: file.path,
-          },
-        };
-        const response2 = await axiosInstance.post(
-          "/accesscontrol/notify",
-          data
-        );
-        if (response2) {
-          toast.success("your activity is notified to the file uploader");
+          filedetails:{
+            filename:file.fileName,
+            path:file.path
+          }
         }
+       const response2=await axiosInstance.post("/accesscontrol/notify",data)
+       if(response2){
+        toast.success("your activity is notified to the file uploader")
+       }
       }
       console.log("File deleted: ", response);
     } catch (error) {
@@ -316,70 +313,71 @@ function View() {
   };
   const handleView = async (file) => {
     if (
-      user.metamaskId === file.uploader ||
-      (user.branch === file.branch && user.role === "Admin") ||
-      user.role === "Head"
+        user.metamaskId === file.uploader ||
+        (user.branch === file.branch && user.role === "Admin") ||
+        user.role === "Head"
     ) {
-      view(file);
-    } else if (file.isPrivate === false) {
-      view(file);
+       view(file)
+    } 
+    else if(file.isPrivate===false){
+      view(file)
       try {
-        const data = {
-          to: file.uploader,
-          type: "View",
-          userdata: {
-            name: user.name,
-            role: user.role,
-            metamaskId: user.metamaskId,
+        const data={
+          to:file.uploader,
+          type:"View",
+          userdata:{
+            name:user.name,
+            role:user.role,
+            metamaskId:user.metamaskId
           },
-          filedetails: {
-            filename: file.fileName,
-            path: file.path,
-          },
-        };
-        const response = await axiosInstance.post(
-          "/accesscontrol/notify",
-          data
-        );
-        if (response) {
-          console.log("your activity is notified");
+          filedetails:{
+            filename:file.fileName,
+            path:file.path
+          }
+        }
+        const response=await axiosInstance.post("/accesscontrol/notify",data)
+        if(response){
+          console.log("your activity is notified")
         }
       } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setrequestfiledata(file);
-      setviewaccess(true);
-      setviewloader(true);
-      try {
-        const data = { fileId: file.id, userId: user.metamaskId };
-        console.log(data, "console from data");
-        const reponse = await axiosInstance.post(
-          "/accesscontrol/getfileaccessstatus",
-          data
-        );
-        if (reponse.data.data) {
-          setviewdata(reponse.data.data);
-          setviewloader(false);
-        }
-      } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+    
+    else {
+      setrequestfiledata(file)
+      setviewaccess(true)
+      setviewloader(true)
+       try {
+        const data={fileId:file.id,userId:user.metamaskId}
+        console.log(data,"console from data")
+         const reponse=await axiosInstance.post("/accesscontrol/getfileaccessstatus",data)
+         if(reponse.data.data){
+           setviewdata(reponse.data.data)
+           setviewloader(false)
+         }
+       } catch (error) {
+          console.log(error)
+       }
 
-  async function view(file) {
-    const pinataGatewayUrl = `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`;
+        
+    }
 
-    try {
+    
+};
+
+async function view (file){
+  const pinataGatewayUrl = `https://gateway.pinata.cloud/ipfs/${file.ipfsHash}`;
+
+  try {
       // Fetch the file from Pinata
       const response = await axios.get(pinataGatewayUrl, {
-        responseType: "arraybuffer", // Fetch binary data
+          responseType: "arraybuffer", // Fetch binary data
       });
 
       // Create a Blob from the binary data
       const blob = new Blob([response.data], {
-        type: response.headers["content-type"], // Use the content type returned by the server
+          type: response.headers["content-type"], // Use the content type returned by the server
       });
 
       // Generate a URL for the Blob
@@ -387,457 +385,427 @@ function View() {
 
       // Handle image or PDF
       if (response.headers["content-type"].startsWith("image")) {
-        // Open image in a new tab or display in the page
-        window.open(fileURL, "_blank"); // Opens in a new tab
+          // Open image in a new tab or display in the page
+          window.open(fileURL, "_blank"); // Opens in a new tab
       } else if (response.headers["content-type"] === "application/pdf") {
-        // Open PDF in a new tab or embed in the page
-        window.open(fileURL, "_blank"); // Opens PDF in a new tab
+          // Open PDF in a new tab or embed in the page
+          window.open(fileURL, "_blank"); // Opens PDF in a new tab
       } else {
-        // For other file types, download the file
-        const link = document.createElement("a");
-        link.href = fileURL;
-        link.download = file.fileName || "file";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+          // For other file types, download the file
+          const link = document.createElement("a");
+          link.href = fileURL;
+          link.download = file.fileName || "file";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
       }
-      setviewaccess(false);
-    } catch (error) {
+      setviewaccess(false)
+  } catch (error) {
       console.error("Error fetching file:", error);
       alert("Failed to fetch the file.");
-    }
   }
-  const handleSendViewRequest = async (viewdata) => {
-    setviewloader(true);
-    const userId = user.metamaskId;
-    const data = {
-      filedetails: {
-        fileId: requestfiledata.id,
-        to: requestfiledata.uploader,
+}
+const handleSendViewRequest =async (viewdata) =>{
+  setviewloader(true)
+    const userId= user.metamaskId
+    const data={
+      filedetails:{
+        fileId:requestfiledata.id,
+        to:requestfiledata.uploader
       },
       description,
-      userId,
-    };
-    try {
-      const response = await axiosInstance.post(
-        "/accesscontrol/createviewrequest",
-        data
-      );
-      if (response) {
-        toast.success("sucsessfully send the request to the uploader");
-        setviewaccess(false);
-        setviewloader(false);
-      }
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+      userId
     }
-  };
-  function canupload() {
-    //     if(user.bracnh)
-    // }
+ try {
+   const response = await axiosInstance.post("/accesscontrol/createviewrequest",data)
+     if(response){
+       toast.success("sucsessfully send the request to the uploader")
+       setviewaccess(false)
+       setviewloader(false)
+     }
+     console.log(response)
+     
+ } catch (error) {
+  console.log(error)
+ }
 
-    return (
-      <div className="min-h-screen p-3">
-        <div className="max-w-5xl mx-auto drop-shadow-2xl rounded-lg p-1 shadow-lg">
-          <h1 className="text-2xl font-bold mb-6">Blockchain File Explorer</h1>
+}
 
-          {/* Breadcrumb Navigation */}
-          <Breadcrumb>
-            <BreadcrumbList className="flex flex-wrap mb-6">
-              {breadcrumbs.map((crumb, index) => (
-                <BreadcrumbItem key={index}>
-                  <BreadcrumbLink
-                    onClick={() => handleBreadcrumbClick(index)}
-                    className={`cursor-pointer ${
-                      index === breadcrumbs.length - 1
-                        ? "font-semibold"
-                        : "hover:text-blue-500"
-                    }`}
-                  >
-                    {crumb}
-                  </BreadcrumbLink>
-                  {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                </BreadcrumbItem>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
 
-          {/* Folders */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {folders?.map((folder, index) => (
-              <div
-                key={index}
-                onClick={() => handleFolderClick(folder)}
-                className="cursor-pointer border rounded-lg p-4 flex flex-col items-center hover:shadow-lg transform transition duration-200 ease-in-out hover:scale-105"
-              >
-                <RiFolderShield2Fill
-                  size={60}
-                  className="mb-2 text-orange-500 "
-                />
-                <span className="font-medium truncate text-center">
-                  {folder}
-                </span>
-              </div>
-            ))}
-          </div>
+  return (
+    <div className="min-h-screen p-3">
+      <div className="max-w-5xl mx-auto drop-shadow-2xl rounded-lg p-1 shadow-lg">
+        <h1 className="text-2xl font-bold mb-6">Blockchain File Explorer</h1>
 
-          {/* Files in Selected Folder */}
-          {selectedFolder && (
-            <div>
-              <h1 className="text-2xl mt-3 w-full text-center underline">
-                All Files Of {selectedFolder}
-              </h1>
-              {canupload() ? (
-                <div
-                  className="bg-primary rounded-full p-2 text-center text-white cursor-pointer w-fit mx-auto mt-3"
-                  onClick={handleuploadmodel}
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb>
+          <BreadcrumbList className="flex flex-wrap mb-6">
+            {breadcrumbs.map((crumb, index) => (
+              <BreadcrumbItem key={index}>
+                <BreadcrumbLink
+                  onClick={() => handleBreadcrumbClick(index)}
+                  className={`cursor-pointer ${
+                    index === breadcrumbs.length - 1
+                      ? "font-semibold"
+                      : "hover:text-blue-500"
+                  }`}
                 >
-                  Add File
+                  {crumb}
+                </BreadcrumbLink>
+                {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+              </BreadcrumbItem>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        {/* Folders */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          {folders?.map((folder, index) => (
+            <div
+              key={index}
+              onClick={() => handleFolderClick(folder)}
+              className="cursor-pointer border rounded-lg p-4 flex flex-col items-center hover:shadow-lg transform transition duration-200 ease-in-out hover:scale-105"
+            >
+              <RiFolderShield2Fill
+                size={60}
+                className="mb-2 text-orange-500 "
+              />
+              <span className="font-medium truncate text-center">{folder}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Files in Selected Folder */}
+        {selectedFolder && (
+          <div>
+            <h1 className="text-2xl mt-3 w-full text-center underline">
+              All Files Of {selectedFolder}
+            </h1>
+            <div
+              className="bg-primary rounded-full p-2 text-center text-white cursor-pointer w-fit mx-auto mt-3"
+              onClick={handleuploadmodel}
+            >
+              Add File
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
+              {files?.map((file, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 flex flex-col items-center hover:shadow-lg transform transition duration-200 ease-in-out hover:scale-105"
+                >
+                  {file.isPrivate ? (
+                    <LuFileLock2 size={60} className="mb-2 text-red-500" />
+                  ) : (
+                    <FaRegFileLines size={60} className="mb-2 text-blue-500" />
+                  )}
+                  <a
+                    href={file?.path || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 font-medium truncate text-center"
+                  >
+                    {file?.fileName}
+                  </a>
+                  <div className="flex gap-2">
+                    {console.log(user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin"))}
+                    <Button onClick={()=>handleView(file)}>{ user.metamaskId==file.uploader||(user.branch==file.branch&&user.role=="Admin")||user.role=="Head"?"view":"checkout"}</Button>
+                    {
+                      user.metamaskId==file.uploader?(<Button
+                        onClick={() => handleDeleteFile(file)}
+                        variant={"destructive"}
+                        disabled={isDeleting} // Disable while deleting
+                      >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      
+                      </Button>):(  <div></div>)
+                    }
+                    
+                  </div>
+                  <p
+                    className="underline ml-2 mt-3 cursor-pointer"
+                    onClick={() => handleKnowMoreClick(file)}
+                  >
+                    Know more
+                  </p>
                 </div>
-              ) : (
-                <></>
+              ))}
+            </div>
+          </div>
+        )}
+        {selectedFile && (
+          <Dialog
+            open={selectedFile}
+            onOpenChange={() => setSelectedFile(null)}
+          >
+            <DialogTrigger asChild>
+              <Button variant="outline" className="hidden">
+                Edit Profile
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>File Details</DialogTitle>
+                <DialogDescription>
+                  Here are the details for the file "{selectedFile?.fileName}
+                  ".
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="fileName" className="text-right">
+                    File Name
+                  </Label>
+                  <Input
+                    id="fileName"
+                    defaultValue={selectedFile?.fileName}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="branch" className="text-right">
+                    Branch
+                  </Label>
+                  <Input
+                    id="branch"
+                    defaultValue={selectedFile?.branch}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="department" className="text-right">
+                    Department
+                  </Label>
+                  <Input
+                    id="department"
+                    defaultValue={selectedFile?.department}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="uploader" className="text-right">
+                    Uploader
+                  </Label>
+                  <Input
+                    id="uploader"
+                    defaultValue={selectedFile?.uploader}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="ipfsHash" className="text-right">
+                    IPFS Hash
+                  </Label>
+                  <Input
+                    id="ipfsHash"
+                    defaultValue={selectedFile?.ipfsHash}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="button" onClick={() => setSelectedFile(null)}>
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+        {/* Upload Dialog */}
+        {uploadmodel && (
+          <Dialog open={uploadmodel} onOpenChange={() => setuploadmodel(false)}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="hidden">
+                Upload
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Upload Files</DialogTitle>
+                <DialogDescription>
+                  <Input disabled={true} value={breadcrumbs.join(" > ")} />
+                  <div>
+                    <Label>Access Type</Label>
+                    <RadioGroup
+                      value={isPrivate ? "private" : "public"}
+                      onValueChange={(value) =>
+                        setIsPrivate(value === "private")
+                      }
+                    >
+                      <div className="flex items-center space-x-4">
+                        <RadioGroupItem value="public" id="public" />
+                        <Label htmlFor="public">Public</Label>
+                        <RadioGroupItem value="private" id="private" />
+                        <Label htmlFor="private">Private</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mb-4 flex justify-center gap-4">
+                <Button
+                  variant={uploadMode === "single" ? "secondary" : "primary"}
+                  onClick={() => setUploadMode("single")}
+                >
+                  Single Upload
+                </Button>
+                <Button
+                  variant={uploadMode === "bulk" ? "secondary" : "primary"}
+                  onClick={() => setUploadMode("bulk")}
+                >
+                  Bulk Upload
+                </Button>
+              </div>
+              {uploadMode === "single" && (
+                <Card>
+                  <CardHeader>
+                    <h2 className="text-lg font-semibold">
+                      Single File Upload
+                    </h2>
+                  </CardHeader>
+                  <CardContent>
+                    <input
+                      type="file"
+                      onChange={handleSingleFileChange}
+                      accept="image/*,application/pdf"
+                    />
+                    {singleFile && (
+                      <div className="mt-2">
+                        {singleFile.type.includes("pdf") ? (
+                          <AiOutlineFilePdf size={25} />
+                        ) : (
+                          <FaFileImage size={25} />
+                        )}
+                        <span>{singleFile.name}</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               )}
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 mt-4">
-                {files?.map((file, index) => (
-                  <div
-                    key={index}
-                    className="border rounded-lg p-4 flex flex-col items-center hover:shadow-lg transform transition duration-200 ease-in-out hover:scale-105"
-                  >
-                    {file.isPrivate ? (
-                      <LuFileLock2 size={60} className="mb-2 text-red-500" />
-                    ) : (
-                      <FaRegFileLines
-                        size={60}
-                        className="mb-2 text-blue-500"
-                      />
+              {uploadMode === "bulk" && (
+                <Card>
+                  <CardHeader>
+                    <h2 className="text-lg font-semibold">Bulk File Upload</h2>
+                  </CardHeader>
+                  <CardContent>
+                    <input
+                      type="file"
+                      multiple
+                      onChange={handleBulkFilesChange}
+                      accept="image/*,application/pdf"
+                    />
+                    {bulkFiles.length > 0 && (
+                      <div className="mt-2">
+                        {bulkFiles.map((file, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            {file.type.includes("pdf") ? (
+                              <AiOutlineFilePdf size={25} />
+                            ) : (
+                              <FaFileImage size={25} />
+                            )}
+                            <span>{file.name}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
-                    <a
-                      href={file?.path || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 font-medium truncate text-center"
-                    >
-                      {file?.fileName}
-                    </a>
-                    <div className="flex gap-2">
-                      {console.log(
-                        user.metamaskId == file.uploader ||
-                          (user.branch == file.branch && user.role == "Admin")
-                      )}
-                      <Button onClick={() => handleView(file)}>
-                        {user.metamaskId == file.uploader ||
-                        (user.branch == file.branch && user.role == "Admin") ||
-                        user.role == "Head"
-                          ? "view"
-                          : "checkout"}
+                  </CardContent>
+                </Card>
+              )}
+
+              <DialogFooter>
+                <Button
+                  onClick={handleUploadToIPFS}
+                  disabled={loading}
+                  variant="primary"
+                  className="w-full"
+                >
+                  {loading ? "Uploading..." : "Upload to IPFS"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
+        
+  {viewaccess && (
+    <Dialog open={viewaccess} onClose={() => setviewaccess(false)}>
+      <DialogContent>
+        <Card>
+          {viewloader ? (
+            <div className="flex justify-center items-center h-20">
+              <p>Loading...</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {viewdata.type === false ? (
+                <div className="space-y-4">
+                  <p className="text-lg font-medium text-gray-700">
+                    You don't have access to view this file.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Please provide a description for your request:
+                  </p>
+                  <Input
+                    placeholder="Enter your description"
+                    onChange={(e) => setdescription(e.target.value)}
+                  />
+                  <Button
+                    className="w-full bg-blue-500 text-white"
+                    onClick={() => handleSendViewRequest(viewdata)}
+                  >
+                    Request for View
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {viewdata.data.status === "pending" ? (
+                    <div className="text-center">
+                      <Button
+                        disabled
+                        variant="destructive"
+                        className="w-full"
+                      >
+                        Pending
                       </Button>
-                      {user.metamaskId == file.uploader ? (
-                        <Button
-                          onClick={() => handleDeleteFile(file)}
-                          variant={"destructive"}
-                          disabled={isDeleting} // Disable while deleting
-                        >
-                          {isDeleting ? "Deleting..." : "Delete"}
-                        </Button>
-                      ) : (
-                        <div></div>
-                      )}
                     </div>
-                    <p
-                      className="underline ml-2 mt-3 cursor-pointer"
-                      onClick={() => handleKnowMoreClick(file)}
-                    >
-                      Know more
-                    </p>
-                  </div>
-                ))}
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-lg font-medium text-green-600">
+                        You have permission to view the file.
+                      </p>
+                      <Button
+                        className="w-full bg-green-500 text-white"
+                        onClick={() => view(requestfiledata)}
+                      >
+                        View File
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="text-right">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setviewaccess(false)}
+                >
+                  Close
+                </Button>
               </div>
             </div>
           )}
-          {selectedFile && (
-            <Dialog
-              open={selectedFile}
-              onOpenChange={() => setSelectedFile(null)}
-            >
-              <DialogTrigger asChild>
-                <Button variant="outline" className="hidden">
-                  Edit Profile
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>File Details</DialogTitle>
-                  <DialogDescription>
-                    Here are the details for the file "{selectedFile?.fileName}
-                    ".
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="fileName" className="text-right">
-                      File Name
-                    </Label>
-                    <Input
-                      id="fileName"
-                      defaultValue={selectedFile?.fileName}
-                      className="col-span-3"
-                      readOnly
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="branch" className="text-right">
-                      Branch
-                    </Label>
-                    <Input
-                      id="branch"
-                      defaultValue={selectedFile?.branch}
-                      className="col-span-3"
-                      readOnly
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="department" className="text-right">
-                      Department
-                    </Label>
-                    <Input
-                      id="department"
-                      defaultValue={selectedFile?.department}
-                      className="col-span-3"
-                      readOnly
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="uploader" className="text-right">
-                      Uploader
-                    </Label>
-                    <Input
-                      id="uploader"
-                      defaultValue={selectedFile?.uploader}
-                      className="col-span-3"
-                      readOnly
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="ipfsHash" className="text-right">
-                      IPFS Hash
-                    </Label>
-                    <Input
-                      id="ipfsHash"
-                      defaultValue={selectedFile?.ipfsHash}
-                      className="col-span-3"
-                      readOnly
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="button" onClick={() => setSelectedFile(null)}>
-                    Close
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
-          {/* Upload Dialog */}
-          {uploadmodel && (
-            <Dialog
-              open={uploadmodel}
-              onOpenChange={() => setuploadmodel(false)}
-            >
-              <DialogTrigger asChild>
-                <Button variant="outline" className="hidden">
-                  Upload
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Upload Files</DialogTitle>
-                  <DialogDescription>
-                    <Input disabled={true} value={breadcrumbs.join(" > ")} />
-                    <div>
-                      <Label>Access Type</Label>
-                      <RadioGroup
-                        value={isPrivate ? "private" : "public"}
-                        onValueChange={(value) =>
-                          setIsPrivate(value === "private")
-                        }
-                      >
-                        <div className="flex items-center space-x-4">
-                          <RadioGroupItem value="public" id="public" />
-                          <Label htmlFor="public">Public</Label>
-                          <RadioGroupItem value="private" id="private" />
-                          <Label htmlFor="private">Private</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="mb-4 flex justify-center gap-4">
-                  <Button
-                    variant={uploadMode === "single" ? "secondary" : "primary"}
-                    onClick={() => setUploadMode("single")}
-                  >
-                    Single Upload
-                  </Button>
-                  <Button
-                    variant={uploadMode === "bulk" ? "secondary" : "primary"}
-                    onClick={() => setUploadMode("bulk")}
-                  >
-                    Bulk Upload
-                  </Button>
-                </div>
-                {uploadMode === "single" && (
-                  <Card>
-                    <CardHeader>
-                      <h2 className="text-lg font-semibold">
-                        Single File Upload
-                      </h2>
-                    </CardHeader>
-                    <CardContent>
-                      <input
-                        type="file"
-                        onChange={handleSingleFileChange}
-                        accept="image/*,application/pdf"
-                      />
-                      {singleFile && (
-                        <div className="mt-2">
-                          {singleFile.type.includes("pdf") ? (
-                            <AiOutlineFilePdf size={25} />
-                          ) : (
-                            <FaFileImage size={25} />
-                          )}
-                          <span>{singleFile.name}</span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-
-                {uploadMode === "bulk" && (
-                  <Card>
-                    <CardHeader>
-                      <h2 className="text-lg font-semibold">
-                        Bulk File Upload
-                      </h2>
-                    </CardHeader>
-                    <CardContent>
-                      <input
-                        type="file"
-                        multiple
-                        onChange={handleBulkFilesChange}
-                        accept="image/*,application/pdf"
-                      />
-                      {bulkFiles.length > 0 && (
-                        <div className="mt-2">
-                          {bulkFiles.map((file, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2"
-                            >
-                              {file.type.includes("pdf") ? (
-                                <AiOutlineFilePdf size={25} />
-                              ) : (
-                                <FaFileImage size={25} />
-                              )}
-                              <span>{file.name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
-
-                <DialogFooter>
-                  <Button
-                    onClick={handleUploadToIPFS}
-                    disabled={loading}
-                    variant="primary"
-                    className="w-full"
-                  >
-                    {loading ? "Uploading..." : "Upload to IPFS"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
-
-          {viewaccess && (
-            <Dialog open={viewaccess} onClose={() => setviewaccess(false)}>
-              <DialogContent>
-                <Card>
-                  {viewloader ? (
-                    <div className="flex justify-center items-center h-20">
-                      <p>Loading...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {viewdata.type === false ? (
-                        <div className="space-y-4">
-                          <p className="text-lg font-medium text-gray-700">
-                            You don't have access to view this file.
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Please provide a description for your request:
-                          </p>
-                          <Input
-                            placeholder="Enter your description"
-                            onChange={(e) => setdescription(e.target.value)}
-                          />
-                          <Button
-                            className="w-full bg-blue-500 text-white"
-                            onClick={() => handleSendViewRequest(viewdata)}
-                          >
-                            Request for View
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {viewdata.data.status === "pending" ? (
-                            <div className="text-center">
-                              <Button
-                                disabled
-                                variant="destructive"
-                                className="w-full"
-                              >
-                                Pending
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="space-y-2">
-                              <p className="text-lg font-medium text-green-600">
-                                You have permission to view the file.
-                              </p>
-                              <Button
-                                className="w-full bg-green-500 text-white"
-                                onClick={() => view(requestfiledata)}
-                              >
-                                View File
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      <div className="text-right">
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          onClick={() => setviewaccess(false)}
-                        >
-                          Close
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </Card>
-              </DialogContent>
-            </Dialog>
-          )}
-        </div>
+        </Card>
+      </DialogContent>
+    </Dialog>
+  )}
+  
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default View;
