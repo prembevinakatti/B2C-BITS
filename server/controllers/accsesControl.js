@@ -240,6 +240,7 @@ module.exports.updateCategory = async (req, res) => {
         .status(201)
         .json({ message: "Main category created successfully" });
     } else {
+      console.log("code reached here")
       const categoryData = await categoryModel.findOne({ _id: data._id });
       if (!categoryData) {
         return res.status(404).json({ message: "Category not found" });
@@ -250,6 +251,7 @@ module.exports.updateCategory = async (req, res) => {
         }
       });
       await categoryData.save();
+      console.log("code reached here")
       return res.status(200).json({ message: "Category updated successfully" });
     }
   } catch (error) {
