@@ -522,7 +522,7 @@ function View() {
                         ? "view"
                         : "checkout"}
                     </Button>
-                    {user.metamaskId == file.uploader ? (
+                    {user.metamaskId == file.uploader.toLowerCase() ? (
                       <Button
                         onClick={() => handleDeleteFile(file)}
                         variant={"destructive"}
