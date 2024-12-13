@@ -228,6 +228,7 @@ module.exports.handleReject = async (req, res) => {
 module.exports.updateCategory = async (req, res) => {
   try {
     const { toUpdate, data } = req.body;
+    console.log("code reached here")
     if (!data || !data._id || !data.Subcategories) {
       return res.status(400).json({ message: "Invalid input data" });
     }

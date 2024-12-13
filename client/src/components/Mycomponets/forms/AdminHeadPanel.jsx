@@ -20,14 +20,12 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import Loader from "../Loader/Loader";
 
 const AdminHeadPanel = () => {
   const [mainCategory, setMainCategory] = useState("");
   const [subCategories, setSubCategories] = useState([""]);
   const [fetchedMainCategories, setFetchedMainCategories] = useState([]);
   const [activeTab, setActiveTab] = useState("input");
-  const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.authUser);
 
   const handleAddSubCategory = () => {
@@ -58,12 +56,9 @@ const AdminHeadPanel = () => {
       },
     };
 
-    setLoading(true); // Show loader
     try {
-      const response = await axiosInstance.post(
-        "/accesscontrol/updatecatogory",
-        data
-      );
+      console.log("code reached here")
+      const response = await axiosInstance.post("/accesscontrol/updatecatogory", data);
       if (response.status === 201) {
         toast.success("Main category and subcategories updated successfully.");
         setMainCategory("");
@@ -72,22 +67,15 @@ const AdminHeadPanel = () => {
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while updating categories.");
-    } finally {
-      setLoading(false); // Hide loader
     }
   };
 
   const fetchAllMainCategories = async () => {
-    setLoading(true); // Show loader
     try {
-      const response = await axiosInstance.get(
-        "/accesscontrol/getcategorydata"
-      );
+      const response = await axiosInstance.get("/accesscontrol/getcategorydata");
       setFetchedMainCategories(response.data.data || []);
     } catch (error) {
       console.error("Error fetching main categories:", error);
-    } finally {
-      setLoading(false); // Hide loader
     }
   };
 
@@ -99,120 +87,104 @@ const AdminHeadPanel = () => {
 
   return (
     <div className="p-8">
-      {loading ? (
-        <Loader />
-      ) : (
-        <Card>
-          <CardHeader>
-            <h2 className="text-xl font-bold">
-              {user.role === "Head"
-                ? "Head Control Panel"
-                : "Admin Control Panel"}
-            </h2>
-          </CardHeader>
-          <CardContent>
-            {user.role === "Head" && (
-              <div>
-                <Label htmlFor="mainCategory">Main Category</Label>
-                <Tabs
-                  defaultValue="input"
-                  onValueChange={(value) => setActiveTab(value)}
-                >
-                  <TabsList className="mt-2">
-                    <TabsTrigger value="drop">Select from Existing</TabsTrigger>
-                    <TabsTrigger value="input">Create New</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="drop">
-                    {fetchedMainCategories.length === 0 ? (
-                      <p>No existing categories found. Please create one.</p>
-                    ) : (
-                      <Select onValueChange={(value) => setMainCategory(value)}>
-                        <SelectTrigger className="w-full mt-2">
-                          <SelectValue placeholder="Select Branch" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {fetchedMainCategories.map((category) => (
-                              <SelectItem
-                                key={category._id}
-                                value={category._id}
-                              >
-                                {category._id}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </TabsContent>
-                  <TabsContent value="input">
+      <Card>
+        <CardHeader>
+          <h2 className="text-xl font-bold">
+            {user.role === "Head" ? "Head Control Panel" : "Admin Control Panel"}
+          </h2>
+        </CardHeader>
+        <CardContent>
+          {user.role === "Head" && (
+            <div>
+              <Label htmlFor="mainCategory">Main Category</Label>
+              <Tabs defaultValue="input" onValueChange={(value) => setActiveTab(value)}>
+                <TabsList className="mt-2">
+                  <TabsTrigger value="drop">Select from Existing</TabsTrigger>
+                  <TabsTrigger value="input">Create New</TabsTrigger>
+                </TabsList>
+                <TabsContent value="drop">
+                  {fetchedMainCategories.length === 0 ? (
+                    <p>No existing categories found. Please create one.</p>
+                  ) : (
+                    <Select onValueChange={(value) => setMainCategory(value)}>
+                      <SelectTrigger className="w-full mt-2">
+                        <SelectValue placeholder="Select Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {fetchedMainCategories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category._id}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  )}
+                </TabsContent>
+                <TabsContent value="input">
+                  <Input
+                    id="mainCategory"
+                    placeholder="Enter main category"
+                    className="mt-2"
+                    value={mainCategory}
+                    onChange={(e) => setMainCategory(e.target.value)}
+                  />
+                </TabsContent>
+              </Tabs>
+
+              <div className="mt-6">
+                <Label>Subcategories</Label>
+                {subCategories.map((subCategory, index) => (
+                  <div className="flex items-center gap-4 mt-2" key={index}>
                     <Input
-                      id="mainCategory"
-                      placeholder="Enter main category"
-                      className="mt-2"
-                      value={mainCategory}
-                      onChange={(e) => setMainCategory(e.target.value)}
+                      placeholder={`Subcategory ${index + 1}`}
+                      value={subCategory}
+                      onChange={(e) => handleSubCategoryChange(index, e.target.value)}
                     />
-                  </TabsContent>
-                </Tabs>
-
-                <div className="mt-6">
-                  <Label>Subcategories</Label>
-                  {subCategories.map((subCategory, index) => (
-                    <div className="flex items-center gap-4 mt-2" key={index}>
-                      <Input
-                        placeholder={`Subcategory ${index + 1}`}
-                        value={subCategory}
-                        onChange={(e) =>
-                          handleSubCategoryChange(index, e.target.value)
-                        }
-                      />
-                      <Button onClick={() => handleRemoveSubCategory(index)}>
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                  <Button className="mt-4" onClick={handleAddSubCategory}>
-                    + Add Subcategory
-                  </Button>
-                </div>
+                    <Button onClick={() => handleRemoveSubCategory(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button className="mt-4" onClick={handleAddSubCategory}>
+                  + Add Subcategory
+                </Button>
               </div>
-            )}
+            </div>
+          )}
 
-            {user.role !== "Head" && (
-              <div>
-                <Label>Main Category</Label>
-                <Input value={user.branch} disabled className="mt-2" />
-                <div className="mt-6">
-                  <Label>Subcategories</Label>
-                  {subCategories.map((subCategory, index) => (
-                    <div className="flex items-center gap-4 mt-2" key={index}>
-                      <Input
-                        placeholder={`Subcategory ${index + 1}`}
-                        value={subCategory}
-                        onChange={(e) =>
-                          handleSubCategoryChange(index, e.target.value)
-                        }
-                      />
-                      <Button onClick={() => handleRemoveSubCategory(index)}>
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                  <Button className="mt-4" onClick={handleAddSubCategory}>
-                    + Add Subcategory
-                  </Button>
-                </div>
+          {user.role !== "Head" && (
+            <div>
+              <Label>Main Category</Label>
+              <Input value={user.branch} disabled className="mt-2" />
+              <div className="mt-6">
+                <Label>Subcategories</Label>
+                {subCategories.map((subCategory, index) => (
+                  <div className="flex items-center gap-4 mt-2" key={index}>
+                    <Input
+                      placeholder={`Subcategory ${index + 1}`}
+                      value={subCategory}
+                      onChange={(e) => handleSubCategoryChange(index, e.target.value)}
+                    />
+                    <Button onClick={() => handleRemoveSubCategory(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button className="mt-4" onClick={handleAddSubCategory}>
+                  + Add Subcategory
+                </Button>
               </div>
-            )}
-          </CardContent>
-          <CardFooter>
-            <Button onClick={handleSubmit} className="w-full">
-              Submit
-            </Button>
-          </CardFooter>
-        </Card>
-      )}
+            </div>
+          )}
+        </CardContent>
+        <CardFooter>
+          <Button onClick={handleSubmit} className="w-full">
+            Submit
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
