@@ -1,6 +1,12 @@
-import React from 'react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
+import React from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 
 const plans = [
   {
@@ -8,12 +14,12 @@ const plans = [
     price: "Free",
     priceUSD: "Free",
     storage: "50GB",
-    uploadRoles: "Only Head",
+    uploadRoles: "All Roles",
     monthlyCost: 0,
     features: [
       "Free of cost",
       "50GB storage",
-      "Only head can upload documents",
+      "All roles can upload documents",
     ],
   },
   {
@@ -66,7 +72,9 @@ const PlanCard = ({ plan }) => {
       <CardHeader className="bg-secondary p-4 rounded-t-lg">
         <CardTitle className="text-2xl font-bold text-primary flex justify-between items-center">
           {plan.name}
-          <span className="font-semibold text-accent text-lg">{plan.price} / {plan.priceUSD}</span>
+          <span className="font-semibold text-accent text-lg">
+            {plan.price} / {plan.priceUSD}
+          </span>
         </CardTitle>
         <CardDescription className="text-base text-muted-foreground mt-2">
           {plan.storage} storage | {plan.uploadRoles} upload access
@@ -88,7 +96,9 @@ const PlanCard = ({ plan }) => {
 const PricingPage = () => {
   return (
     <div className="max-w-7xl mx-auto p-8">
-      <h2 className="text-4xl font-bold text-center text-primary mb-12">Choose Your Plan</h2>
+      <h2 className="text-4xl font-bold text-center text-primary mb-12">
+        Choose Your Plan
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {plans.map((plan, index) => (
           <PlanCard key={index} plan={plan} />
