@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 
 const HomePage = () => {
   const user = useSelector((state) => state.auth.authUser);
-  console.log(user)
   const navigate = useNavigate();
 
   return (
@@ -23,9 +22,20 @@ const HomePage = () => {
         <p className="text-lg text-muted-foreground">
           Empowering knowledge and secure file management for a decentralized future.
         </p>
-        {/* Show "Get Started" button only if user is not logged in */}
-        {user!==null && (
-          <Button className="mt-6" onClick={() => navigate("/view")}>Get Started</Button>
+        {/* Show "Get Started" button and trial message only if user is logged in */}
+        {user !== null ? (
+          <div>
+            <p className="mt-4 text-3xl text-orange-500 font-semibold text-muted-foreground">
+              Currently in Free Trial
+            </p>
+            <Button className="mt-6" onClick={() => navigate("/view")}>
+              Get Started
+            </Button>
+          </div>
+        ) : (
+          <Button className="mt-6" onClick={() => navigate("/view")}>
+            Get Started
+          </Button>
         )}
       </div>
 

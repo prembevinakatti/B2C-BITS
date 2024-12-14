@@ -1,3 +1,4 @@
+const NotificationModel = require("../models/notification");
 const Requestmodel = require("../models/requestmodle");
 const userModel = require("../models/userModel");
 
@@ -52,5 +53,24 @@ module.exports.handleGetRequestByStatus = async (req, res) => {
     res
       .status(500)
       .json({ msg: "Internal server error", error: error.message });
+  }
+};
+
+
+module.exports.handleGetNotifications = async (req, res) => {
+  try {
+    const { metamaskId } = req.query;
+    if (!metamaskId) {
+      return res.status(400).json({ msg: "Metamask ID is required." });
+    }
+    const toLowerCaseMetamask = metamaskId.toLowerCase();
+    const response = await NotificationModel.find({ to: toLowerCaseMetamask });
+    if (!response || response.length === 0) {
+      return res.status(200).json({ msg: "No notifications found.", data: [] });
+    }
+    return res.status(200).json({ msg: "Notifications fetched successfully.", data: response });
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    return res.status(500).json({ msg: "Internal server error." });
   }
 };

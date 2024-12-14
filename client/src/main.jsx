@@ -22,6 +22,8 @@ import View from "./components/Mycomponets/fileview/View";
 import AdminHeadPanel from "./components/Mycomponets/forms/AdminHeadPanel";
 import RequestViewPage from "./components/Mycomponets/showFiles/RequestViewPage";
 import HomePage from "./components/Mycomponets/HomePages/Home";
+import NotificationView from "./components/Mycomponets/showFiles/NotificationPage";
+import PricingPage from "./components/Mycomponets/Others/PricingPage";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -36,6 +38,8 @@ const router = createBrowserRouter(
         <Route path="/view" element={<View />} />
         <Route path="/assignpanel" element={<AdminHeadPanel />} />
         <Route path="/requests" element={<RequestViewPage />} />
+        <Route path="/notications" element={<NotificationView/>}/>
+        <Route path="/pricing" element={<PricingPage/>}/>
       </Route>
     </>
   )

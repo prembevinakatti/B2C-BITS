@@ -13,8 +13,10 @@ import { FaUserAlt } from "react-icons/fa";
 
 import { RiAdminLine } from "react-icons/ri";
 import { MdDashboard, MdNotifications } from "react-icons/md";
+import { FaCodePullRequest } from "react-icons/fa6";
 import { SiBlockchaindotcom } from "react-icons/si";
 import { PiTreeViewDuotone } from "react-icons/pi";
+import { IoIosPricetags } from "react-icons/io";
 import {
   Sheet,
   SheetContent,
@@ -121,7 +123,15 @@ function Navbar() {
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/requests")}
                   >
-                    <MdNotifications /> Requests
+                    <FaCodePullRequest /> Requests
+                  </div>
+                  <Separator className="my-3" />
+                
+                  <div
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/notications")}
+                  >
+                    <MdNotifications /> Noification
                   </div>
                   <Separator className="my-3" />
                   {isLogined?.role === "Head" && (
@@ -139,6 +149,14 @@ function Navbar() {
                   >
                     <SiBlockchaindotcom />
                     Connect to Metamask
+                  </div>
+                  <Separator className="my-3" />
+                  <div
+                    className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
+                    onClick={() => handleNavigation("/pricing")}
+                  >
+                    <IoIosPricetags />
+                      Pricing
                   </div>
                   <Separator className="my-3" />
                   {isLogined && (
