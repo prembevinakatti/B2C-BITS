@@ -61,8 +61,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="w-full shadow-md ">
-      <div className="max-w-7xl mx-auto flex items-center px-4 py-3 justify-between">
+    <nav className="w-screen shadow-md ">
+      <div className=" mx-auto flex items-center px-4 py-3 justify-between">
         {/* Menu Trigger */}
         <Popover open={showPopover} onOpenChange={setShowPopover}>
           <PopoverTrigger asChild>
@@ -175,7 +175,7 @@ function Navbar() {
 
         {/* Logo */}
         <div className="text-2xl font-bold text-black dark:text-white">
-          <a href="/">you should name it</a>
+          <a href="/">BlockDocs</a>
         </div>
 
         {/* Auth and Theme Toggle */}
