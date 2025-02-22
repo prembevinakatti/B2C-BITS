@@ -74,3 +74,79 @@ module.exports.handleGetNotifications = async (req, res) => {
     return res.status(500).json({ msg: "Internal server error." });
   }
 };
+
+
+// const FileUpload = require('../models/FileUpload');
+// const User = require('../models/userModel');  // Assuming you have a User model
+// const MAX_STORAGE = 50 * 1024 * 1024 * 1024;  // 50GB in bytes
+
+// // Function to upload a file and update space usage
+// module.exports.uploadFile = async (req, res) => {
+//   try {
+//     const { userId, file } = req.body;  // Assuming user ID and file are passed in the request body
+
+//     // File size in bytes
+//     const fileSize = file.size;
+
+//     // Check current total storage used by the user
+//     const totalUsedSpace = await FileUpload.aggregate([
+//       { $match: { userId } },
+//       { $group: { _id: '$userId', totalSpaceUsed: { $sum: '$fileSize' } } },
+//     ]);
+
+//     const currentUsedSpace = totalUsedSpace[0]?.totalSpaceUsed || 0;
+
+//     // Check if user has exceeded the limit
+//     if (currentUsedSpace + fileSize > MAX_STORAGE) {
+//       return res.status(400).json({
+//         message: 'Storage limit exceeded. You cannot upload this file.',
+//       });
+//     }
+
+//     // Save file upload details to the database
+//     const newFile = new FileUpload({
+//       userId,
+//       fileName: file.originalname,
+//       fileSize,
+//       fileUrl: file.url,  // Assuming the file URL is generated after upload
+//     });
+
+//     await newFile.save();
+
+//     // Return response
+//     return res.status(200).json({
+//       message: 'File uploaded successfully.',
+//       file: newFile,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Error uploading file.' });
+//   }
+// };
+
+// // Function to get total space used by a user
+// const getUserSpaceUsage = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+
+//     // Get total space used by the user
+//     const totalUsedSpace = await FileUpload.aggregate([
+//       { $match: { userId } },
+//       { $group: { _id: '$userId', totalSpaceUsed: { $sum: '$fileSize' } } },
+//     ]);
+
+//     const usedSpace = totalUsedSpace[0]?.totalSpaceUsed || 0;
+
+//     // Return the total space used in MB and GB
+//     return res.status(200).json({
+//       usedSpaceMB: usedSpace / (1024 * 1024),
+//       usedSpaceGB: usedSpace / (1024 * 1024 * 1024),
+//       remainingSpaceGB: (MAX_STORAGE - usedSpace) / (1024 * 1024 * 1024),
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Error fetching space usage.' });
+//   }
+// };
+
+
