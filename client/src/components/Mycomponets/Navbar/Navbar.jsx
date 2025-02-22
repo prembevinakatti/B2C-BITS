@@ -94,14 +94,16 @@ function Navbar() {
                   >
                     <FaHome /> Home
                   </div>
-                  <Separator className="my-3" />
+                  {/* <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/view")}
                   >
                     <PiTreeViewDuotone /> View Files
                   </div>
-                  <Separator className="my-3" />
+                  
+                  <Separator className="my-3" /> */}
+                    <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/uploadfiles")}
@@ -118,21 +120,21 @@ function Navbar() {
                       Create Admin Or Staff
                     </div>
                   )}
-                  <Separator className="my-3" />
+                  {/* <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/requests")}
                   >
                     <FaCodePullRequest /> Requests
                   </div>
-                  <Separator className="my-3" />
-                
-                  <div
+                  <Separator className="my-3" /> */}
+                  {/* <Separator className="my-3" /> */}
+                  {/* <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/notications")}
                   >
                     <MdNotifications /> Noification
-                  </div>
+                  </div> */}
                   <Separator className="my-3" />
                   {isLogined?.role === "Head" && (
                     <div
@@ -150,7 +152,8 @@ function Navbar() {
                     <SiBlockchaindotcom />
                     Connect to Metamask
                   </div>
-                  <Separator className="my-3" />
+                   <Separator className="my-3" />
+                  {/* <Separator className="my-3" />
                   <div
                     className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-black dark:text-slate-300 dark:hover:text-white"
                     onClick={() => handleNavigation("/pricing")}
@@ -158,7 +161,7 @@ function Navbar() {
                     <IoIosPricetags />
                       Pricing
                   </div>
-                  <Separator className="my-3" />
+                  <Separator className="my-3" /> */}
                   {isLogined && (
                     <div
                       className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-red-800 dark:hover:text-red-500 dark:text-red-200"
