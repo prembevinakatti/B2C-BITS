@@ -51,7 +51,7 @@ function CreateForm() {
         }
       );
       console.log(response.data);
-      navigate("/view");
+      navigate("/uploadfiles");
       toast.success("User account created successfully");
     } catch (error) {
       console.log("Error creating admin or staff account in client", error);

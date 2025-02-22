@@ -174,7 +174,7 @@ const FileUpload = ({ onUploadComplete }) => {
       await uploadDocs.wait();
 
       console.log("Upload to blockchain successfully");
-      navigate("/view");
+      // navigate("/view");
       toast.success("Upload to blockchain successfully");
     } catch (error) {
       console.error("Error uploading file to IPFS:", error);
