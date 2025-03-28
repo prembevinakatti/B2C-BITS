@@ -114,6 +114,17 @@ Ensure you have the following installed:
    - View files uploaded by others with notification sent to the uploader.
    - Request permission for viewing private files uploaded by others.
 
+
+## Login Credentials
+
+### Head
+- **Email**: head@head.com
+- **Password**: 1234
+
+### Admin
+- **Email**: admin@admin.com
+- **Password**: 123456
+
 ---
 
 ## Contact
