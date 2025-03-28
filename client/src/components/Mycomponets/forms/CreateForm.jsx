@@ -41,7 +41,7 @@ function CreateForm() {
     try {
       data.branch = branch;
       const response = await axios.post(
-        `http://localhost:3000/api/user/createAdminOrStaff`,
+        `https://b2c-bits-server.onrender.com/api/user/createAdminOrStaff`,
         data,
         {
           headers: {

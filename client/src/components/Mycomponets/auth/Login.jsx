@@ -31,7 +31,7 @@ function Login() {
     setLoading(true);
     try {
       const response = await axiosInstance.post(
-        "http://localhost:3000/api/user/loginAccount",
+        "https://b2c-bits-server.onrender.com/api/user/loginAccount",
         data
       );
       toast.success("Login successful");

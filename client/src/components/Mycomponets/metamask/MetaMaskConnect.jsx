@@ -28,7 +28,7 @@ const MetaMaskConnect = () => {
         if (connectedAccount) {
           // Send the Metamask ID only if it exists
           const response = await axios.post(
-            `http://localhost:3000/api/user/setMetamaskId`,
+            `https://b2c-bits-server.onrender.com/api/user/setMetamaskId`,
             { metamaskId: connectedAccount },
             {
               headers: {
