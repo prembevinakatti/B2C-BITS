@@ -401,7 +401,7 @@ const FileUpload = ({ onUploadComplete }) => {
         onClick={handleUploadToIPFS}
         disabled={loading}
         variant="primary"
-        className="w-full"
+        className="w-full bg-orange-700"
       >
         {loading ? "Uploading..." : "Upload to IPFS"}
       </Button>
