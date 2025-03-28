@@ -54,7 +54,7 @@ Ensure you have the following installed:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/prembevinakatti/JSS-HackElite.git
+   git clone https://github.com/prembevinakatti/B2C-BITS.git
    ```
 
 2. **Compile and Deploy the Smart Contract**
