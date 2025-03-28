@@ -32,7 +32,7 @@ const router = createBrowserRouter(
         <Route path="/connectmetamask" element={<MetaMaskConnect />} />
 
         {/* restricted usrsroute */}
-        <Route path="/home" element={<HomePage />}/>
+        <Route path="/" element={<HomePage />}/>
         <Route path="/createuser" element={<CreateForm />} />
         <Route path="/uploadfiles" element={<FileUpload />} />
         <Route path="/view" element={<View />} />
