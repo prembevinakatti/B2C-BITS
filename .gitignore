@@ -1,2 +1,3 @@
 node_modules/
 server/firebase-admin-config.json
+.env
