@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const corsOptions = {
-  origin: "*", // Adjust this to the correct frontend URL
+  origin: "https://b2c-bits.onrender.com", // Adjust this to the correct frontend URL
   methods: "GET,POST,PUT,DELETE,OPTIONS", // Add all allowed HTTP methods
   credentials: true, // If you're using cookies or credentials
 };
